@@ -1,0 +1,9 @@
+{
+	"id": "com.borho.newsg",
+	"version": "1.0.1",
+	"vendor": "Borho",
+	"type": "web",
+	"main": "index.html",
+	"title": "NewsG",
+	"icon": "icon.png"
+}
