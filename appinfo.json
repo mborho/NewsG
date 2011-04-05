@@ -1,9 +1,9 @@
 {
 	"id": "com.borho.newsg",
-	"version": "1.0.1",
-	"vendor": "Borho",
+	"version": "1.2.5",
+	"vendor": "Martin Borho",
 	"type": "web",
 	"main": "index.html",
 	"title": "NewsG",
-	"icon": "icon.png"
+	"icon": "news_64.png"
 }

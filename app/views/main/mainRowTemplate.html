@@ -1,7 +1,16 @@
-<div class="palm-row" x-mojo-touch-feedback="delayed">  
-     <div class="palm-row-wrapper newsitem">  
+<div class="no-separator" x-mojo-touch-feedback="delayed">  
+     <div class="palm-row-wrapper newsitem" name="newsitem" style="border-bottom:1px solid #fff;">  
          <div id="itemTitle" class="title" style="padding:0;"><a href="#{href}">#{-title}</a></div>  
          <div class="publisher">#{publisher} / #{date}</div>
-         <div id="itemTeaser" class="teaser">#{-image}#{-teaser}</div>         
+         <div id="itemTeaser" class="teaser">#{-image}#{-teaser}</div>   
+         <div class="moreSourcesTop">&#160;</div>
+         <div id="moreSources" class="moreSources">            
+            <div class="moreLabel" id="moreLabel_#{index}" onClick="MainAssistant.prototype.showMoreSources(#{index});return false" style="text-align:center">
+                 <span id="moreExpand_#{index}">&#9660;</span><span id="moreCollapse_#{index}" style="display:none">&#9650;</span>  <!--&#160;&#160;&#160;#{more_label}-->
+            </div>
+            <div style="display:none" class="moreSourcesBox" id="moreSources_#{index}">
+              #{-relateds}
+            </div>
+         </div>        
      </div>  
 </div>  
