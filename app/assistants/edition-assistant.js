@@ -1,6 +1,3 @@
-//function EditionAssistant(sceneAssistant) {
-//  this.sceneAssistant = sceneAssistant;
-
 var EditionDialogAssistant = Class.create({
   
     initialize: function(sceneAssistant) {
@@ -12,16 +9,6 @@ var EditionDialogAssistant = Class.create({
         this.widget = widget;
         
         // list widget
-        this.editionModel2 = {"items": [
-           {title:'United States', ned:'us'},
-           {title:'United Kingdom', ned:'uk'},
-           {title:'Germany', ned:'de'},
-           {title:'France', ned:'fr'},
-           {title:'Spain', ned:'es'},
-           {title:'Italy', ned:'it'},
-           {title:'Russia', ned:'ru'},
-           {title:'Australia', ned:'au'}
-        ]}
         this.editionModel = {"items": getEditionList()};
         this.controller.setupWidget("editionListWgt",
           this.attributes = {
@@ -37,7 +24,7 @@ var EditionDialogAssistant = Class.create({
     },
  
     handleSelect: function(event) {        
-        MainAssistant.prototype.editionUpdate(event.item.ned);
+        MainAssistant.prototype.editionUpdate(event.item.value);
         this.widget.mojo.close();
     }
 });
