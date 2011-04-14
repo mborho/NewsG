@@ -1,6 +1,8 @@
 <div class="no-separator" style="display:#{display}" x-mojo-touch-feedback="delayed">  
      <div class="palm-row-wrapper newsitem" name="newsitem" style="border-bottom:1px solid #fff;">  
-         <div id="itemTitle" class="title" style="padding:0;"><a href="#{href}">#{-title}</a></div>  
+         <div id="itemTitle" class="title" style="padding:0;">
+              <a href="#{href}" onclick="#{onclick}" ondblclick="#{ondblclick}">#{-title}</a>
+         </div>  
          <div class="publisher">#{publisher} / #{date}</div>
          <div id="itemTeaser" class="teaser">#{-image}#{-teaser}</div>   
          <div id="moreSources" class="moreSources" style="display:#{more_display}">            

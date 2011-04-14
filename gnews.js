@@ -274,7 +274,7 @@ var gnewsEditions = {
             {label: "Utenriks", value: "w"},
             {label: "Innenriks", value: "n"},
             {label: "Næringsliv", value: "b"},
-            {label: "Vitenskap/teknologi ", value: "t"},
+            {label: "Vitenskap/teknologi", value: "t"},
             {label: "Politikk", value: "p"},
             {label: "Underholdning", value: "e"},
             {label: "Sport", value: "s"},
@@ -463,6 +463,43 @@ var gnewsEditions = {
             {label: "熱門", value: "po"}
         ]
     },    
+    "tw" : {
+        ned : "tw",
+        name : "台灣版 (Taiwan)",
+        more : "更多新聞來源",
+        topics : [
+            {label: "焦點新聞", value: "h"},
+            {label: "國際", value: "w"},
+            {label: "台灣", value: "n"},
+            {label: "財經", value: "b"},
+            {label: "科技", value: "t"},
+            {label: "政治", value: "p"},
+            {label: "娛樂", value: "e"},
+            {label: "體育", value: "s"},
+            {label: "健康", value: "m"},
+            {label: "焦點新聞", value: "ir"},//none
+            {label: "熱門", value: "po"}
+        ]
+    },      
+    "kr" : {
+        ned : "kr",
+        name : "한국 (Korea)",
+        more : "자세히 보기",
+        topics : [
+            {label: "주요 뉴스", value: "h"},
+            {label: "국제", value: "w"},
+            {label: "한국 ", value: "n"},
+            {label: "경제", value: "b"},
+            {label: "정보과학", value: "t"},
+            {label: "정치", value: "p"},
+            {label: "연예", value: "e"},
+            {label: "스포츠", value: "s"},
+            {label: "건강", value: "m"},//None
+            {label: "관심뉴스", value: "ir"},//None
+            {label: "인기뉴스", value: "po"}
+        ]
+    },
+        
 }
 
 function getEditionLabel(edition) {

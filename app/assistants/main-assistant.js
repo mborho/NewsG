@@ -168,6 +168,12 @@ MainAssistant.prototype.renderNews = function(data) {
     var newData = [];
     var more_display = 'none';
     if(global_topic != "ir") var more_display = 'block';
+    var dblClick = '';
+    var onClick = '';
+    if(global_dbl_click == 'On') {
+             var dblClick = 'MainAssistant.prototype.moreLinkClicked(this);return false;';
+             var onClick = 'return false;';
+    }
     for (j=0;j<data.length;j++) {
         res = j;
         try {
@@ -194,13 +200,13 @@ MainAssistant.prototype.renderNews = function(data) {
               var rel = data[res]['relatedStories']; 
               for (i=0;i<=rel.length;i++) {
                    relatedsHtml += '<div><a href="'+rel[i]['unescapedUrl']+'" class="moreLink" ';
-                   //relatedsHtml += 'onClick="MainAssistant.prototype.moreLinkClicked(this)"';
+                   if(global_dbl_click == 'On') relatedsHtml += 'onClick="'+onClick+'" onDblClick="'+dblClick+'"';
                    relatedsHtml += '>'+rel[i]['titleNoFormatting']+'</a>&#160;&#160;<span class="morePublisher">'+rel[i]['publisher']+'</span></div>';
               }
           } catch(e) {}    
           itemIndex = (global_page*global_page_length)+res
           var add = true;
-          var display = 'block';
+          var display = 'block';          
           if(this.newsUrls.hasOwnProperty(url)) {
              display = 'none';
              Mojo.Log.error('ALREADY EXISTS'+url);
@@ -217,7 +223,9 @@ MainAssistant.prototype.renderNews = function(data) {
           more_label: gnewsEditions[global_ned].more,
           more_display: more_display,
           relateds: relatedsHtml,
-          display:display}                          
+          display:display,
+          onclick:onClick,
+          ondblclick:dblClick}                          
         } catch(e) {
           Mojo.Log.error(e);
         }
@@ -267,7 +275,7 @@ MainAssistant.prototype.showMoreSources = function(index) {
 }
 
 MainAssistant.prototype.moreLinkClicked = function(link) {
-   //Mojo.Log.error('link clicked: '+link.href);
+   Mojo.Log.error('link clicked: '+link.href);
    var request = new Mojo.Service.Request('palm://com.palm.applicationManager', {
     method: 'open',
     parameters: {

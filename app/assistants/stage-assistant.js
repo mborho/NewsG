@@ -28,16 +28,16 @@ function getDepotValue(response) {
 function setDefaultEdition() {
     db.get('settings.defaultEdition', function(response) {
            var value = getDepotValue(response);
-           if(value != '') global_ned = value;              
-           else global_ned = 'us';
+           if(value != '') global_default_ned = value;              
+           else global_default_ned = 'us';
        }, dbFailure);
 }
 
 function setDefaultTopic() {
     db.get('settings.defaultTopic', function(response) {
            var value = getDepotValue(response);
-           if(value != '') global_topic = value;              
-           else global_topic = 'h';
+           if(value != '') global_default_topic = value;              
+           else global_default_topic = 'h';
        }, dbFailure);
 }
 
@@ -49,14 +49,27 @@ function setDefaultLoadImages() {
        }, dbFailure);
 }
 
+function setDefaultDblClick() {
+    db.get('settings.dblClick', function(response) {
+           var value = getDepotValue(response);
+           if(value != '') global_dbl_click = value;              
+           else global_dbl_click = 'Off';
+       }, dbFailure);
+}
+
+global_default_ned = ''
 global_ned = ''
 setDefaultEdition();
 
+global_default_topic = ''
 global_topic = ''
 setDefaultTopic();
 
 global_load_images = '';
 setDefaultLoadImages();
+
+global_dbl_click = '';
+setDefaultDblClick();
 
 global_color = getTopicColor(global_topic);
 global_page = 1;
@@ -66,7 +79,9 @@ link_clicked = false;
 var interValId = false
 function settingsChecker () {
   Mojo.Log.error('Waiting for settings: ' + intervalId); 
-  if(global_ned != '' && global_topic != '' && global_load_images != '') {
+  if(global_default_ned != '' && global_default_topic != '' && global_load_images != ''  && global_dbl_click != '') {
+      global_ned = global_default_ned;
+      global_topic = global_default_topic;
       clearInterval(intervalId);
       Mojo.Controller.stageController.pushScene({name: "main", disableSceneScroller: true});
   }
