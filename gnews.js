@@ -189,10 +189,46 @@ var gnewsEditions = {
             {label: "Entertainment", value: "e"},
             {label: "Sport", value: "s"},
             {label: "Gezondheid", value: "m"},
-            {label: "Spotlight", value: "ir"},
+            {label: "Spotlight", value: "ir"},// None
             {label: "Meest gelezen", value: "po"}
         ]
-    },     
+    },  
+    "nl_be" : {
+        ned : "nl_be",
+        name : "België",
+        more : "Meer bronnen",
+        topics : [
+            {label: "Voorpaginanieuws", value: "h"},
+            {label: "Buitenland", value: "w"},
+            {label: "België", value: "n"},
+            {label: "Zakelijk", value: "b"},
+            {label: "Wetenschap/techniek", value: "t"},
+            {label: "Politiek", value: "p"},
+            {label: "Entertainment", value: "e"},
+            {label: "Sport", value: "s"},
+            {label: "Gezondheid", value: "m"},
+            {label: "Spotlight", value: "ir"},//None
+            {label: "Meest gelezen", value: "po"}
+        ]
+    },
+    "fr_be" : {
+        ned : "fr_be",
+        name : "Belgique",
+        more : "Plus de sources",
+        topics : [
+            {label: "À la une", value: "h"},
+            {label: "International", value: "w"},
+            {label: "Belgique", value: "n"},
+            {label: "Économie", value: "b"},
+            {label: "Science/Tech  ", value: "t"},
+            {label: "Politique", value: "p"},
+            {label: "Divertissements", value: "e"},
+            {label: "Sports", value: "s"},
+            {label: "Santé", value: "m"},
+            {label: "À lire", value: "ir"}, // None
+            {label: "Articles les plus lus", value: "po"},
+        ]
+    },       
     "es" : {
         ned : "es",
         name : "España",
@@ -211,6 +247,24 @@ var gnewsEditions = {
             {label: "Más popular", value: "po"},
         ]
     },
+    "pt-PT_pt" : {
+        ned : "pt-PT_pt",
+        name : "Portugal",
+        more : "Mais fontes",
+        topics : [
+            {label: "Top Stories", value: "h"},
+            {label: "Mundo", value: "w"},
+            {label: "Portugal", value: "n"},
+            {label: "Negócios", value: "b"},            
+            {label: "Ciência", value: "t"},
+            {label: "Política", value: "p"},
+            {label: "Entretenimento", value: "e"},
+            {label: "Desporto", value: "s"},
+            {label: "Saúde", value: "m"},
+            {label: "Em foco", value: "ir"},//None
+            {label: "Mais populares", value: "po"}
+        ]
+    },    
     "it" : {
         ned : "it",
         name : "Italia",
@@ -317,6 +371,24 @@ var gnewsEditions = {
             {label: "Zdraví", value: "m"},
             {label: "Stále aktuální", value: "ir"},
             {label: "Nejoblíbenější", value: "po"}
+        ]
+    },    
+    "hu_hu" : {
+        ned : "hu_hu",
+        name : "Magyarország",
+        more : "További források",
+        topics : [
+            {label: "Vezető hírek", value: "h"},
+            {label: "Nemzetközi", value: "w"},
+            {label: "Magyarország", value: "n"},
+            {label: "Üzleti élet", value: "b"},            
+            {label: "Tudomány/technológia", value: "t"},
+            {label: "Politika", value: "p"},
+            {label: "Szórakozás", value: "e"},
+            {label: "Sport", value: "s"},
+            {label: "Egészség", value: "m"},//None
+            {label: "Reflektorfényben", value: "ir"},//None
+            {label: "Legnépszerűbb témakörök", value: "po"}
         ]
     },    
     "tr_tr" : {

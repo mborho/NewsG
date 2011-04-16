@@ -24,6 +24,9 @@ MainAssistant.prototype = {
     //this.mainListHandler = this.loadDataSource.bindAsEventListener(this);    
     this.controller.listen("mainListWgt", Mojo.Event.listTap, function(event){});
     
+    // handler for pull to refesh
+    this.controller.listen("newsScroller",Mojo.Event.scrollStarting, this._scrollStart.bind(this));
+    
     this.topicModel = getEditionTopics(global_ned);
     this.controller.setupWidget("topicSelector",
         this.attributes = {
@@ -53,6 +56,7 @@ MainAssistant.prototype = {
 	cleanup: function() {
 		Ares.cleanupSceneAssistant(this);
 	},
+	pulled_counter: 0,
 };
 
 MainAssistant.prototype.setTopicColor = function(topic, with_items) {    
@@ -104,6 +108,7 @@ MainAssistant.prototype.handleTopicSelect = function(event)
     this.setTopicColor(event.value);  
     global_topic = event.value;
     global_page = 1;
+    global_page_triggered = 1;
     this.newsModel["items"] = [];
     this.newsUrls = {};
     this.controller.modelChanged(this.newsModel);
@@ -246,13 +251,15 @@ MainAssistant.prototype.renderNews = function(data) {
     }
     if(global_page == 1) {
        this.controller.get('newsScroller').mojo.revealTop()
+    } else {
+       global_page_triggered = global_page;
     }
 }
 
-MainAssistant.prototype.loadNextPage = function(event) {
-   //Mojo.Log.error('load more');
+MainAssistant.prototype.loadNextPage = function(event) {   
    $('load-more-icon').hide();
    global_page = global_page + 1;
+   Mojo.Log.error('load more:' + global_page);
    this.spinnerAction('start');
    this.requestApi(global_topic);
 }
@@ -286,3 +293,25 @@ MainAssistant.prototype.moreLinkClicked = function(link) {
     }
   });
 }
+
+MainAssistant.prototype._scrollStart = function(event) {
+        //the event object returned is a pointer to the moved event of the list, which returns some cool info about the scrolling of list: position, if its finishing up moving, etc
+        event.addListener(this);
+};
+
+MainAssistant.prototype.moved = function(stopped,position) {
+        var index = this.controller.get("mainListWgt").mojo.getLength()-1
+        var itemNode = this.controller.get("mainListWgt").mojo.getNodeByIndex(index);        
+        if(itemNode){                
+                var offset = Element.viewportOffset(itemNode); 
+                if(offset.toArray()[1] < 85 && global_page_triggered == global_page){
+                    this.pulled_counter++;
+                    //Mojo.Log.error('COUNTER: '+this.pulled_counter+' / '+offset.toArray()[1]);
+                    if(this.pulled_counter >= 16) {
+                        //Mojo.Log.error('COUNTER TRIGGERED: '+this.pulled_counter);                        
+                        this.loadNextPage();
+                        this.pulled_counter = 0;
+                    }
+                } else this.pulled_counter = 0;
+        }
+};

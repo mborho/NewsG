@@ -73,6 +73,7 @@ setDefaultDblClick();
 
 global_color = getTopicColor(global_topic);
 global_page = 1;
+global_page_triggered = 1;
 global_page_length = 8;
 link_clicked = false;
 
@@ -118,7 +119,12 @@ StageAssistant.prototype.handleCommand = function(event) {
 	            case 'do-about':
 	                var msg = '<small>&#169; 2011, Martin Borho <a href="mailto:martin@borho.net">martin@borho.net</a><br/>';
 	                msg += 'License: GNU General Public License (GPL) Vers.2<br/>';
-	                msg += 'Source: <a href="http://github.com/mborho/newsg">http://github.com/mborho/newsg</a></small>';
+	                msg += 'Source: <a href="http://github.com/mborho/newsg">http://github.com/mborho/newsg</a>';
+	                msg += '<br/><br/><div><b>Changelog:</b><br/>'
+	                msg += '<div>* 1.4.2<br/> - pull to refresh gesture added<br/> - more editions<br/> - this changelog</div>';
+	                msg += '<div>* 1.4.0<br/> - taiwanese and korean editions added<br/> - option for opening links with double click added</div>';
+	                msg += '</div>';
+	                msg += '</small>';
 	                this.controller.showAlertDialog({
 	                    onChoose: function(value) {},
 	                    title: $L("NewsG - daily headlines from Google News. Simple yet elegant."),
