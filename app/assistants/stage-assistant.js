@@ -1,5 +1,4 @@
 var db= new Mojo.Depot ({name:"NewsGDb",version:1,replace:false}, dbOpenOK, dbOpenFail);
-
 function dbOpenOK() {
    Mojo.Log.error('DATABASE OK: '+db);
 }
@@ -17,72 +16,90 @@ function dbFailure(transaction,result) {
     Mojo.Controller.errorDialog("Database save error (#" + result.message + ")"); 
 }
 
-function getDepotValue(response) {
-    var recordSize = Object.values(response).size();  
-    if(recordSize > 0) {
-        return response.value
-    }
-    return '';   
-}    
+var Settings = function() {
 
-function setDefaultEdition() {
-    db.get('settings.defaultEdition', function(response) {
-           var value = getDepotValue(response);
-           if(value != '') global_default_ned = value;              
-           else global_default_ned = 'us';
-       }, dbFailure);
-}
+    var getDepotValue = function(response) {
+            var recordSize = Object.values(response).size();  
+            if(recordSize > 0) {
+                return response.value
+            }
+            return '';   
+        };
+    
+    return {
+        defaultTopic: '',
+        topic: '',
+        defaultNed: '',
+        ned: '',
+        loadImages: '',
+        dblClick: '',
+        mobilizer: '',
+        color: '',
+        page: 1,
+        pageTriggered: 1,
+        pageLength: 8,
+        
+        loadFromDepot: function() {
+            this.loadDefaultEdition();
+            this.loadDefaultTopic();
+            this.loadDefaultDblClick();
+            this.loadDefaultMobilizer();
+            this.loadDefaultImgLoad();
+        },
+        
+        loadDefaultEdition: function() {
+            db.get('settings.defaultEdition', function(response) {
+                    var value = getDepotValue(response);
+                    if(value != '') Settings.defaultNed = value;              
+                    else Settings.defaultNed = 'us';
+                }, dbFailure);            
+        },
+        
+        loadDefaultTopic: function() {
+            db.get('settings.defaultTopic', function(response) {
+                    var value = getDepotValue(response);
+                    if(value != '') Settings.defaultTopic = value;              
+                    else Settings.defaultTopic = 'h';
+                }, dbFailure);
+        },
+        
+        loadDefaultDblClick: function() {
+            db.get('settings.dblClick', function(response) {
+                    var value = getDepotValue(response);
+                    if(value != '') Settings.dblClick = value;              
+                    else Settings.dblClick = 'Off';
+                }, dbFailure);            
+        },
+        
+        loadDefaultMobilizer: function() {
+            db.get('settings.mobilizer', function(response) {
+                    var value = getDepotValue(response);
+                    if(value != '') Settings.mobilizer = value;              
+                    else Settings.mobilizer = 'Off';
+                }, dbFailure);            
+        },
+        
+        
+        loadDefaultImgLoad: function() {
+            db.get('settings.loadImages', function(response) {
+                    var value = getDepotValue(response);
+                    if(value != '') Settings.loadImages = value;              
+                    else Settings.loadImages = 'On';
+                }, dbFailure);
+        },        
+    }    
+}();   
 
-function setDefaultTopic() {
-    db.get('settings.defaultTopic', function(response) {
-           var value = getDepotValue(response);
-           if(value != '') global_default_topic = value;              
-           else global_default_topic = 'h';
-       }, dbFailure);
-}
-
-function setDefaultLoadImages() {
-    db.get('settings.loadImages', function(response) {
-           var value = getDepotValue(response);
-           if(value != '') global_load_images = value;              
-           else global_load_images = 'On';
-       }, dbFailure);
-}
-
-function setDefaultDblClick() {
-    db.get('settings.dblClick', function(response) {
-           var value = getDepotValue(response);
-           if(value != '') global_dbl_click = value;              
-           else global_dbl_click = 'Off';
-       }, dbFailure);
-}
-
-global_default_ned = ''
-global_ned = ''
-setDefaultEdition();
-
-global_default_topic = ''
-global_topic = ''
-setDefaultTopic();
-
-global_load_images = '';
-setDefaultLoadImages();
-
-global_dbl_click = '';
-setDefaultDblClick();
-
-global_color = getTopicColor(global_topic);
-global_page = 1;
-global_page_triggered = 1;
-global_page_length = 8;
-link_clicked = false;
+Settings.loadFromDepot();
 
 var interValId = false
 function settingsChecker () {
   Mojo.Log.error('Waiting for settings: ' + intervalId); 
-  if(global_default_ned != '' && global_default_topic != '' && global_load_images != ''  && global_dbl_click != '') {
-      global_ned = global_default_ned;
-      global_topic = global_default_topic;
+  if(Settings.defaultNed != '' && Settings.defaultTopic != '' 
+        && Settings.loadImages != ''  && Settings.dblClick != ''
+            && Settings.mobilizer != '') {
+      Settings.ned = Settings.defaultNed;
+      Settings.topic = Settings.defaultTopic;
       clearInterval(intervalId);
       Mojo.Controller.stageController.pushScene({name: "main", disableSceneScroller: true});
   }
@@ -100,7 +117,6 @@ StageAssistant.prototype.setup = function() {
        {label: "Edition", command: 'do-edition', shortcut: 'e'},
        {label: "Settings", command: 'do-prefs', shortcut: 'p'},
        {label: "About", command: 'do-about', shortcut: 'a'},
-       Mojo.Menu.prefsItem
      ]
    };
    this.waitForSettings();

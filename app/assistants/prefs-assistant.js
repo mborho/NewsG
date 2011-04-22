@@ -13,7 +13,7 @@ var PreferencesDialogAssistant = Class.create({
         this.controller.setupWidget("defaultEditionSelector",
            this.attributes = {choices: this.defaultEditionModel},
            this.model = {
-               value: getEditionLabel(global_default_ned),
+               value: getEditionLabel(Settings.defaultNed),
                disabled: false
            }
          ); 
@@ -33,8 +33,8 @@ var PreferencesDialogAssistant = Class.create({
             {label: "Spotlight", value: "ir"},
             {label: "Most Popular", value: "po"}
         ]
-        var topicLabel = getTopicLabel('us', global_default_topic);
-        if(global_default_topic == 'n') topicLabel = 'National';
+        var topicLabel = getTopicLabel('us', Settings.defaultTopic);
+        if(Settings.defaultTopic == 'n') topicLabel = 'National';
 
         this.controller.setupWidget("defaultTopicSelector",
            this.attributes = {choices: this.defaultTopicModel},
@@ -52,7 +52,7 @@ var PreferencesDialogAssistant = Class.create({
                falseValue: "Off"
             },
             this.model = {
-               value: global_load_images,
+               value: Settings.loadImages,
                disabled: false
              }
          ); 
@@ -65,12 +65,25 @@ var PreferencesDialogAssistant = Class.create({
                falseValue: "Off"
             },
             this.model = {
-               value: global_dbl_click,
+               value: Settings.dblClick,
                disabled: false
              }
          ); 
          this.dblClickHandler = this.handleDblClickSelect.bindAsEventListener(this);    
          this.controller.listen("defaultDblClick", Mojo.Event.propertyChange, this.dblClickHandler);                  
+         
+         this.controller.setupWidget("defaultMobilizer",
+            this.attributes = {
+               trueValue: "On",
+               falseValue: "Off"
+            },
+            this.model = {
+               value: Settings.mobilizer,
+               disabled: false
+             }
+         ); 
+         this.mobilizerHandler = this.handleMobilizerSelect.bindAsEventListener(this);    
+         this.controller.listen("defaultMobilizer", Mojo.Event.propertyChange, this.mobilizerHandler);           
     },
  
     cleanup: function (widget) {
@@ -79,24 +92,29 @@ var PreferencesDialogAssistant = Class.create({
        }
     }, 
     handleDefaultEditionSelect: function(event) {        
-        global_default_ned = event.value
+        Settings.defaultNed = event.value
         db.add('settings.defaultEdition', {"value":event.value}, dbSuccess, dbFailure);
     },
     
     handleDefaultTopicSelect: function(event) {        
-        global_default_topic = event.value
+        Settings.defaultTopic = event.value
         db.add('settings.defaultTopic', {"value":event.value}, dbSuccess, dbFailure);
     },
     
     handleLoadImagesSelect: function(event) {        
-        global_load_images = event.value        
+        Settings.loadImages = event.value        
         db.add('settings.loadImages', {"value":event.value}, dbSuccess, dbFailure);
         this.refresh = true;
     },
     
     handleDblClickSelect: function(event) {        
-        global_dbl_click = event.value
+        Settings.dblClick = event.value
         db.add('settings.dblClick', {"value":event.value}, dbSuccess, dbFailure);
         this.refresh = true;        
-    }        
+    },
+    handleMobilizerSelect: function(event) {        
+        Settings.mobilizer = event.value
+        db.add('settings.mobilizer', {"value":event.value}, dbSuccess, dbFailure);
+        this.refresh = true;        
+    }   
 });

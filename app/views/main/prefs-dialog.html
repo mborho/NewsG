@@ -1,4 +1,4 @@
-<div style="height:430px">
+<div id="settings-dialog" style="height:430px">
   <!--span id="prefs-title" class="palm-dialog-title">Settings</span-->    
   <div class="palm-group">
     <div class="palm-group-title" x-mojo-loc=''>Default Edition</div>
@@ -29,10 +29,16 @@
               <div class="prefs-label">Load Images</div>
           </div>
        </div>
-       <div class="palm-row last">
+       <div class="palm-row">
           <div style="palm-row-wrapper">
               <div x-mojo-element="ToggleButton" id="defaultDblClick" class="defaultDblClick" name="defaultDblClick"></div>
-              <div class="prefs-label">Open Links With Double Tap</div>
+              <div class="prefs-label prefs-double-line">Open Links With Double Tap</div>
+          </div>
+       </div>
+       <div class="palm-row last">
+          <div style="palm-row-wrapper">
+              <div x-mojo-element="ToggleButton" id="defaultMobilizer" class="defaultMobilizer" name="defaultMobilizer"></div>
+              <div class="prefs-label prefs-double-line">Open Links With Google Mobilizer</div>
           </div>
        </div>
     </div>

@@ -27,13 +27,13 @@ MainAssistant.prototype = {
     // handler for pull to refesh
     this.controller.listen("newsScroller",Mojo.Event.scrollStarting, this._scrollStart.bind(this));
     
-    this.topicModel = getEditionTopics(global_ned);
+    this.topicModel = getEditionTopics(Settings.ned);
     this.controller.setupWidget("topicSelector",
         this.attributes = {
            choices: this.topicModel
         },
         this.model = {
-          value: getTopicLabel(global_ned, global_topic),
+          value: getTopicLabel(Settings.ned, Settings.topic),
           disabled: false
        }
     ); 
@@ -49,14 +49,16 @@ MainAssistant.prototype = {
         this.attributes = {spinnerSize: "small"},
         this.model = {spinning: false }
     ); 
-    global_page = 1;
-    this.requestApi(global_topic);
-    this.setTopicColor(global_topic);
+    Settings.pageTriggered = 1;
+    Settings.page = 1;
+    this.requestApi(Settings.topic);
+    this.setTopicColor(Settings.topic);
 	},
 	cleanup: function() {
 		Ares.cleanupSceneAssistant(this);
 	},
 	pulled_counter: 0,
+    reloadTriggered: 0
 };
 
 MainAssistant.prototype.setTopicColor = function(topic, with_items) {    
@@ -88,7 +90,7 @@ MainAssistant.prototype.loadDataSource = function(event)
 
 MainAssistant.prototype.spinnerAction = function(mode) {
    var spinner_id = 'spinner';
-   if(global_page > 1) spinner_id += '_small';
+   if(Settings.page > 1) spinner_id += '_small';
    if(mode == "start") {
       this.controller.get(spinner_id).mojo.start()
    } else if(mode == "stop") {
@@ -106,9 +108,9 @@ MainAssistant.prototype.handleTopicSelect = function(event)
 {
     //Mojo.Log.error("Topic selected: "+event.value);
     this.setTopicColor(event.value);  
-    global_topic = event.value;
-    global_page = 1;
-    global_page_triggered = 1;
+    Settings.topic = event.value;
+    Settings.page = 1;
+    Settings.pageTriggered = 1;
     this.newsModel["items"] = [];
     this.newsUrls = {};
     this.controller.modelChanged(this.newsModel);
@@ -117,10 +119,9 @@ MainAssistant.prototype.handleTopicSelect = function(event)
 }
 
 MainAssistant.prototype.editionUpdate = function(edition) {
-   Mojo.Log.error('edition updated: '+global_ned);
-   global_ned = edition;
-   global_page = 1;
-   //global_topic = 'h';
+   Mojo.Log.error('edition updated: '+Settings.ned);
+   Settings.ned = edition;
+   Settings.page = 1;
    Mojo.Controller.stageController.swapScene({name: "main", disableSceneScroller: true});   
 }
 
@@ -129,9 +130,9 @@ MainAssistant.prototype.requestApi = function(topic) {
         if(!topic) {
             throw('requestApi(): topic must be defined');
         }
-        var start = (global_page-1)*global_page_length;
+        var start = (Settings.page-1)*Settings.pageLength;
         var url = 'http://ajax.googleapis.com/ajax/services/search/news?v=1.0';
-        url += '&ned='+global_ned+'&rsz=large&topic='+topic+'&start='+start;
+        url += '&ned='+Settings.ned+'&rsz=large&topic='+topic+'&start='+start;
         //Mojo.Log.error('API URL: '+url);
         var request = new Ajax.Request(url,{
             method: 'GET',
@@ -172,96 +173,116 @@ MainAssistant.prototype.requestNewsSuccess = function(response) {
 MainAssistant.prototype.renderNews = function(data) {
     var newData = [];
     var more_display = 'none';
-    if(global_topic != "ir") var more_display = 'block';
-    var dblClick = '';
-    var onClick = '';
-    if(global_dbl_click == 'On') {
-             var dblClick = 'MainAssistant.prototype.moreLinkClicked(this);return false;';
-             var onClick = 'return false;';
-    }
+    if(Settings.topic != "ir") var more_display = 'block';
+    var onClick = 'MainAssistant.prototype.moreLinkClicked(this);return false;';
+    var dblClick = 'return false;';
+    if(Settings.dblClick == 'On') {
+        var dblClick = 'MainAssistant.prototype.moreLinkClicked(this);return false;';
+        var onClick = 'return false;';
+    }        
+     
     for (j=0;j<data.length;j++) {
         res = j;
         try {
-          var url = decodeURIComponent(data[res]['url']);
-          var headline = data[res]['titleNoFormatting'];
-          var content = data[res]['content'];
-          var publisher = data[res]['publisher'];
+            var url = decodeURIComponent(data[res]['url']);
+//             if(Settings.googleRedirect == "On") {
+//                 url = data[res]['signedRedirectUrl'];
+//             }
+            var headline = data[res]['titleNoFormatting'];
+            var content = data[res]['content'];
+            var publisher = data[res]['publisher'];
 
-          var date = new Date(data[res]['publishedDate']);
-          var published = Mojo.Format.formatDate(date,{date:'medium',time:'short'});
-          //var published = date.getDate()+'.'+date.getMonth()+'.'+(1900+date.getYear())+' '+date.getHours()+':'+date.getMinutes();
-          var imageData = data[res]['image']
-          var imageHtml = ''
-          if(global_load_images == "On") {
+            var date = new Date(data[res]['publishedDate']);
+            var published = Mojo.Format.formatDate(date,{date:'medium',time:'short'});
+            //var published = date.getDate()+'.'+date.getMonth()+'.'+(1900+date.getYear())+' '+date.getHours()+':'+date.getMinutes();
+            var imageData = data[res]['image']
+            var imageHtml = ''
+            if(Settings.loadImages == "On") {
+                try {
+                    var ratio = 110 / imageData['tbWidth'];
+                    imageHtml += '<img src="'+imageData['url']+'" alt="" ';
+                    imageHtml += 'style="width:'+(imageData['tbWidth']*ratio)+'px; height:'+(imageData['tbHeight']*ratio)+'px;" class="newsPic" />';              
+                } catch(e) {}
+            }
+            var relatedsHtml = ''
+
             try {
-                var ratio = 110 / imageData['tbWidth'];
-                imageHtml += '<img src="'+imageData['url']+'" alt="" ';
-                imageHtml += 'style="width:'+(imageData['tbWidth']*ratio)+'px; height:'+(imageData['tbHeight']*ratio)+'px;" class="newsPic" />';              
-            } catch(e) {}
-          }
-          var relatedsHtml = ''
-
-         try {
-              var rel = data[res]['relatedStories']; 
-              for (i=0;i<=rel.length;i++) {
-                   relatedsHtml += '<div><a href="'+rel[i]['unescapedUrl']+'" class="moreLink" ';
-                   if(global_dbl_click == 'On') relatedsHtml += 'onClick="'+onClick+'" onDblClick="'+dblClick+'"';
-                   relatedsHtml += '>'+rel[i]['titleNoFormatting']+'</a>&#160;&#160;<span class="morePublisher">'+rel[i]['publisher']+'</span></div>';
-              }
-          } catch(e) {}    
-          itemIndex = (global_page*global_page_length)+res
-          var add = true;
-          var display = 'block';          
-          if(this.newsUrls.hasOwnProperty(url)) {
-             display = 'none';
-             Mojo.Log.error('ALREADY EXISTS'+url);
-          }
-          this.newsUrls[url] = 1;
-          newData[res] = {
-          index: itemIndex,
-          title: headline, 
-          href:url, 
-          teaser: content, 
-          publisher:publisher,
-          date: published,
-          image: imageHtml,
-          more_label: gnewsEditions[global_ned].more,
-          more_display: more_display,
-          relateds: relatedsHtml,
-          display:display,
-          onclick:onClick,
-          ondblclick:dblClick}                          
+                var rel = data[res]['relatedStories']; 
+                for (i=0;i<=rel.length;i++) {
+                    var mUrl = rel[i]['unescapedUrl'];
+//                     if(Settings.googleRedirect == "On") {
+//                         mUrl = rel[i]['signedRedirectUrl']
+//                     }
+                    relatedsHtml += '<div><a href="'+mUrl+'" class="moreLink" ';
+                    relatedsHtml += 'onClick="'+onClick+'" onDblClick="'+dblClick+'"';
+                    relatedsHtml += '>'+rel[i]['titleNoFormatting']+'</a>&#160;&#160;<span class="morePublisher">'+rel[i]['publisher']+'</span></div>';
+                }
+            } catch(e) {}    
+                itemIndex = (Settings.page*Settings.pageLength)+res
+                var add = true;
+                var display = 'block';          
+                if(this.newsUrls.hasOwnProperty(url)) {
+                    display = 'none';
+                    Mojo.Log.error('ALREADY EXISTS'+url);
+                }
+                this.newsUrls[url] = 1;
+                newData[res] = {
+                    index: itemIndex,
+                    title: headline, 
+                    href:url, 
+                    teaser: content, 
+                    publisher:publisher,
+                    date: published,
+                    image: imageHtml,
+                    more_label: gnewsEditions[Settings.ned].more,
+                    more_display: more_display,
+                    relateds: relatedsHtml,
+                    display:display,
+                    onclick:onClick,
+                    ondblclick:dblClick              
+            }                          
         } catch(e) {
           Mojo.Log.error(e);
         }
     }
     this.spinnerAction('stop');
-    if(global_page > 1) {
+    if(Settings.page > 1) {
        this.newsModel["items"] = this.newsModel["items"].concat(newData);
     } else {
        this.newsUrls = [];
        this.newsModel["items"] = newData;
     }
     this.controller.modelChanged(this.newsModel);
-    this.setTopicColor(global_topic, (more_display=='block'));      
-    if(newData.length == global_page_length) {
+    this.setTopicColor(Settings.topic, (more_display=='block'));      
+    if(newData.length == Settings.pageLength) {
        $('newslist').insert(this.getMoreListItem());
        this.loadMoreHandler = this.loadNextPage.bindAsEventListener(this);    
        this.controller.listen("itemLoadMore", Mojo.Event.tap, this.loadMoreHandler)
     }
-    if(global_page == 1) {
+    if(Settings.page == 1) {
+       this.reloadTriggered = 0;
        this.controller.get('newsScroller').mojo.revealTop()
     } else {
-       global_page_triggered = global_page;
+       Settings.pageTriggered = Settings.page;
     }
 }
 
+MainAssistant.prototype.reloadFirstPage = function(event) { 
+    this.newsModel["items"] = [];
+    this.controller.modelChanged(this.newsModel);
+    Settings.page = 1;
+    Settings.pageTriggered = 1;
+    Mojo.Log.error('reload topic:' + Settings.page);
+    this.spinnerAction('start');
+    this.requestApi(Settings.topic);
+}
+
 MainAssistant.prototype.loadNextPage = function(event) {   
-   $('load-more-icon').hide();
-   global_page = global_page + 1;
-   Mojo.Log.error('load more:' + global_page);
-   this.spinnerAction('start');
-   this.requestApi(global_topic);
+    $('load-more-icon').hide();
+    Settings.page = Settings.page + 1;
+    Mojo.Log.error('load more:' + Settings.page);
+    this.spinnerAction('start');
+    this.requestApi(Settings.topic);
 }
 
 MainAssistant.prototype.getMoreListItem = function() {
@@ -273,25 +294,29 @@ MainAssistant.prototype.getMoreListItem = function() {
     return html;
 }
 MainAssistant.prototype.showMoreSources = function(index) {
-   //Mojo.Log.error("Show more sources: "+index);   
-   $('moreExpandPrefix_'+index).toggle();
-   $('moreExpandSuffix_'+index).toggle();
-   $('moreCollapsePrefix_'+index).toggle();
-   $('moreCollapseSuffix_'+index).toggle();
-   $('moreSources_'+index).toggle();
+    //Mojo.Log.error("Show more sources: "+index);   
+    $('moreExpandPrefix_'+index).toggle();
+    $('moreExpandSuffix_'+index).toggle();
+    $('moreCollapsePrefix_'+index).toggle();
+    $('moreCollapseSuffix_'+index).toggle();
+    $('moreSources_'+index).toggle();
 }
 
 MainAssistant.prototype.moreLinkClicked = function(link) {
-   Mojo.Log.error('link clicked: '+link.href);
-   var request = new Mojo.Service.Request('palm://com.palm.applicationManager', {
-    method: 'open',
-    parameters: {
-      id: 'com.palm.app.browser',
-      params: {
-        target: link.href
-      }
-    }
-  });
+    url = link.href;
+    if(Settings.mobilizer == 'On') {
+        url = 'http://google.com/gwt/x?u='+encodeURIComponent(link.href)
+    }      
+    //Mojo.Log.info('open browser: '+url);
+    var request = new Mojo.Service.Request('palm://com.palm.applicationManager', {
+        method: 'open',
+        parameters: {
+            id: 'com.palm.app.browser',
+            params: {
+                target: url
+            }
+        }
+    });
 }
 
 MainAssistant.prototype._scrollStart = function(event) {
@@ -302,9 +327,19 @@ MainAssistant.prototype._scrollStart = function(event) {
 MainAssistant.prototype.moved = function(stopped,position) {
         var index = this.controller.get("mainListWgt").mojo.getLength()-1
         var itemNode = this.controller.get("mainListWgt").mojo.getNodeByIndex(index);        
-        if(itemNode){                
+        var startNode = this.controller.get("mainListWgt").mojo.getNodeByIndex(0); 
+        if(itemNode && startNode){                
+                var startOffset = Element.viewportOffset(startNode); 
                 var offset = Element.viewportOffset(itemNode); 
-                if(offset.toArray()[1] < 85 && global_page_triggered == global_page){
+                //Mojo.Log.error('COUNTER: '+this.pulled_counter+' / '+offset.toArray()[1]+' / Tr:'+Settings.pageTriggered+' == Pa:'+Settings.page+ ' RLTR:'+this.reloadTriggered);
+                if(startOffset.toArray()[1] > 100 && this.reloadTriggered == 0) {
+                    this.pulled_counter++;
+                    if(this.pulled_counter >= 16) {
+                        this.reloadTriggered = 1;
+                        this.reloadFirstPage();
+                        this.pulled_counter = 0;
+                    }
+                } else if(offset.toArray()[1] < 85 && Settings.pageTriggered == Settings.page){
                     this.pulled_counter++;
                     //Mojo.Log.error('COUNTER: '+this.pulled_counter+' / '+offset.toArray()[1]);
                     if(this.pulled_counter >= 16) {
