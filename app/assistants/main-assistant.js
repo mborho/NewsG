@@ -133,7 +133,7 @@ MainAssistant.prototype.requestApi = function(topic) {
         var start = (Settings.page-1)*Settings.pageLength;
         var url = 'http://ajax.googleapis.com/ajax/services/search/news?v=1.0';
         url += '&ned='+Settings.ned+'&rsz=large&topic='+topic+'&start='+start;
-        //Mojo.Log.error('API URL: '+url);
+        Mojo.Log.error('API URL: '+url);
         var request = new Ajax.Request(url,{
             method: 'GET',
             //parameters: {'op': 'getAllRecords', 'table': table},
@@ -163,6 +163,7 @@ MainAssistant.prototype.requestNewsSuccess = function(response) {
     
     try {
         var resultData = json['responseData']['results'];
+        ApiResult.cursor = json['responseData']['cursor'];
         this.renderNews(resultData);
     }
     catch(e) {
@@ -173,6 +174,7 @@ MainAssistant.prototype.requestNewsSuccess = function(response) {
 MainAssistant.prototype.renderNews = function(data) {
     var newData = [];
     var more_display = 'none';
+    //Mojo.Log.error('LENGTH: '+data.length);
     if(Settings.topic != "ir") var more_display = 'block';
     var onClick = 'MainAssistant.prototype.moreLinkClicked(this);return false;';
     var dblClick = 'return false;';
@@ -254,10 +256,10 @@ MainAssistant.prototype.renderNews = function(data) {
     }
     this.controller.modelChanged(this.newsModel);
     this.setTopicColor(Settings.topic, (more_display=='block'));      
-    if(newData.length == Settings.pageLength) {
-       $('newslist').insert(this.getMoreListItem());
-       this.loadMoreHandler = this.loadNextPage.bindAsEventListener(this);    
-       this.controller.listen("itemLoadMore", Mojo.Event.tap, this.loadMoreHandler)
+    if(Settings.page+1 <= ApiResult.getMaxPage() && newData.length == Settings.pageLength) {
+        $('newslist').insert(this.getMoreListItem());
+        this.loadMoreHandler = this.loadNextPage.bindAsEventListener(this);    
+        this.controller.listen("itemLoadMore", Mojo.Event.tap, this.loadMoreHandler)
     }
     if(Settings.page == 1) {
        this.reloadTriggered = 0;
@@ -277,8 +279,8 @@ MainAssistant.prototype.reloadFirstPage = function(event) {
     this.requestApi(Settings.topic);
 }
 
-MainAssistant.prototype.loadNextPage = function(event) {   
-    $('load-more-icon').hide();
+MainAssistant.prototype.loadNextPage = function(event) { 
+    try {$('load-more-icon').hide();} catch(e){};
     Settings.page = Settings.page + 1;
     Mojo.Log.error('load more:' + Settings.page);
     this.spinnerAction('start');

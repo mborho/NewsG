@@ -90,6 +90,18 @@ var Settings = function() {
     }    
 }();   
 
+var ApiResult = function() {
+    return {
+        cursor: false,
+        getMaxPage: function() {
+             try {
+                return this.cursor.pages.toArray().length;
+             } catch(e) {}
+             return 1;
+        },    
+    }    
+}(); 
+
 Settings.loadFromDepot();
 
 var interValId = false
