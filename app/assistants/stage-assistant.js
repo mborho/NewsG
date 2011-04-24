@@ -35,9 +35,7 @@ var Settings = function() {
         dblClick: '',
         mobilizer: '',
         color: '',
-        page: 1,
-        pageTriggered: 1,
-        pageLength: 8,
+        searchColor: '#1111CC',
         
         loadFromDepot: function() {
             this.loadDefaultEdition();
@@ -90,9 +88,49 @@ var Settings = function() {
     }    
 }();   
 
-var ApiResult = function() {
+var ApiCaller = function() {
+    
     return {
+        request: function(url, successCall, errorCall) {
+            Mojo.Log.error('API URL: '+url);
+            var request = new Ajax.Request(url,{
+            method: 'GET',
+            //parameters: {'op': 'getAllRecords', 'table': table},
+            evalJSON: 'true',
+            onSuccess: successCall,
+            onFailure: errorCall,
+            });
+        },
+        readResults: function(response, renderer, resultHandler) {
+            var data=response.responseText;  
+            try {  
+                var json = data.evalJSON();  
+            } catch(e) {  
+                Mojo.Log.error(e);  
+            }  
+    
+            try {
+                var resultData = json['responseData']['results'];
+                resultHandler.cursor = json['responseData']['cursor'];
+                renderer(resultData);
+            } catch(e) {
+                Mojo.Log.error(e);
+            }        
+        },
+    }
+    
+}();
+
+var TopicResult = function() {
+    return {
+        page: 1,
+        pageTriggered: 1,
+        pageLength: 8,
         cursor: false,
+        reset: function() {
+            this.page = 1;
+            this.pageTriggered = 1;
+        },
         getMaxPage: function() {
              try {
                 return this.cursor.pages.toArray().length;
@@ -101,6 +139,75 @@ var ApiResult = function() {
         },    
     }    
 }(); 
+
+var SearchResult = function() {
+    return {
+        term: '',
+        page: 1,
+        pageTriggered: 1,
+        pageLength: 8,
+        cursor: false,
+        reset: function() {
+            this.page = 1;
+            this.pageTriggered = 1;
+        },
+        getMaxPage: function() {
+             try {
+                return this.cursor.pages.toArray().length;
+             } catch(e) {}
+             return 1;
+        },    
+    }    
+}(); 
+
+var ListHandler = function() {
+    return {
+        reloadFirstPage: function(assistant) { 
+            assistant.newsModel["items"] = [];
+            assistant.newsUrls = {};
+            assistant.controller.modelChanged(assistant.newsModel);
+            assistant.apiResult.reset();
+            Mojo.Log.error('reload search:' + assistant.apiResult.page);
+            assistant.spinnerAction('start');
+            assistant.requestApi();
+        },
+        loadNextPage: function(assistant) { 
+            try {$('load-more-icon').hide();} catch(e){};            
+            assistant.apiResult.page = assistant.apiResult.page + 1;
+            Mojo.Log.error('load more:' + assistant.apiResult.page);
+            assistant.spinnerAction('start');
+            assistant.requestApi();
+        },
+        scrollerMoved: function(assistant) {
+            var index = assistant.controller.get(assistant.resultWidgetName).mojo.getLength()-1
+            var itemNode = assistant.controller.get(assistant.resultWidgetName).mojo.getNodeByIndex(index);        
+            var startNode = assistant.controller.get(assistant.resultWidgetName).mojo.getNodeByIndex(0); 
+            if(itemNode && startNode){                
+                    var startOffset = Element.viewportOffset(startNode); 
+                    var offset = Element.viewportOffset(itemNode); 
+                    //Mojo.Log.error('COUNTER: '+this.pulled_counter+' / '+offset.toArray()[1]+' / Tr:'+this.apiResult.pageTriggered+' == Pa:'+this.apiResult.page+ ' RLTR:'+this.reloadTriggered);
+                    if(startOffset.toArray()[1] > 100 && assistant.reloadTriggered == 0) {
+                        assistant.pulled_counter++;
+                        if(assistant.pulled_counter >= 16) {
+                            assistant.reloadTriggered = 1;
+                            //this.reloadFirstPage();
+                            this.reloadFirstPage(assistant);
+                            assistant.pulled_counter = 0;
+                        }
+                    } else if(offset.toArray()[1] < 85 && assistant.apiResult.pageTriggered == assistant.apiResult.page){
+                        assistant.pulled_counter++;
+                        //Mojo.Log.error('COUNTER: '+this.pulled_counter+' / '+offset.toArray()[1]);
+                        if(assistant.pulled_counter >= 16) {
+                            //Mojo.Log.error('COUNTER TRIGGERED: '+this.pulled_counter);                        
+                            //this.loadNextPage();
+                            this.loadNextPage(assistant);
+                            assistant.pulled_counter = 0;
+                        }
+                    } else assistant.pulled_counter = 0;
+            }             
+        },
+    }
+}();
 
 Settings.loadFromDepot();
 
@@ -138,6 +245,11 @@ StageAssistant.prototype.setup = function() {
 StageAssistant.prototype.waitForSettings = function() {
    intervalId = setInterval ( "settingsChecker()", 200 );
 }
+
+StageAssistant.prototype.openSearchScene = function() {
+    Mojo.Log.error('Opening serch scene');
+    Mojo.Controller.stageController.pushScene({name: "search", disableSceneScroller: true});
+}    
 
 StageAssistant.prototype.handleCommand = function(event) {
     this.controller=Mojo.Controller.stageController.activeScene();
@@ -177,4 +289,30 @@ StageAssistant.prototype.handleCommand = function(event) {
 	                break;
         }        
     }
-}; 
+};
+
+StageAssistant.prototype.moreLinkClicked = function(link) {
+    url = link.href;
+    if(Settings.mobilizer == 'On') {
+        url = 'http://google.com/gwt/x?u='+encodeURIComponent(link.href)
+    }      
+    //Mojo.Log.info('open browser: '+url);
+    var request = new Mojo.Service.Request('palm://com.palm.applicationManager', {
+        method: 'open',
+        parameters: {
+            id: 'com.palm.app.browser',
+            params: {
+                target: url
+            }
+        }
+    });
+};
+
+StageAssistant.prototype.getMoreListItem = function() {
+    var html = '<div class="no-separator load-more" x-mojo-touch-feedback="immediate" ';
+    html += ' id="itemLoadMore">'; 
+    html += '<div class="palm-row-wrapper" id="load-more-icon" style="border-bottom:1px solid #fff;">';
+    html += '&#9660</div>';    
+    html += '</div>';
+    return html;
+};

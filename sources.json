@@ -17,6 +17,10 @@
 	{
 		"source": "app\/assistants\/prefs-assistant.js",
 		"scenes": "main"
-	}
+	},
+    {
+        "source": "app\/assistants\/search-assistant.js",
+        "scenes": "search"
+    },
 
 ]
