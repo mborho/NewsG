@@ -106,9 +106,6 @@ SearchAssistant.prototype.handleSearchSubmit = function(event) {
 
 SearchAssistant.prototype.setSearchColor = function(with_items) {    
     var color = Settings.searchColor;
-//     this.controller.get('.searchContainer searchColorBox').style.backgroundColor = color;
-//     this.controller.get('searchCorner').style.borderColor = color;
-//     this.controller.get('searchCorner').style.backgroundColor = color;
     if(with_items == true) {         
        var elems = $$('#searchContainer div.moreSourcesBox');
        for (i=0;i<=elems.length;i++) {try {elems[i].style.borderColor = color} catch(e) {};}
@@ -242,38 +239,12 @@ SearchAssistant.prototype.renderSearch = function(data) {
 }
 
 SearchAssistant.prototype._scrollStart = function(event) {
-        //the event object returned is a pointer to the moved event of the list, which returns some cool info about the scrolling of list: position, if its finishing up moving, etc
-        event.addListener(this);
+    //the event object returned is a pointer to the moved event of the list, which returns some cool info about the scrolling of list: position, if its finishing up moving, etc
+    event.addListener(this);
 };
 
 SearchAssistant.prototype.moved = function(stopped,position) {
-    //ListHandler.scrollerMoved(this);
-        var index = this.controller.get(this.resultWidgetName).mojo.getLength()-1
-        var itemNode = this.controller.get(this.resultWidgetName).mojo.getNodeByIndex(index);        
-        var startNode = this.controller.get(this.resultWidgetName).mojo.getNodeByIndex(0); 
-        if(itemNode && startNode){                
-            var startOffset = Element.viewportOffset(startNode); 
-            var offset = Element.viewportOffset(itemNode); 
-            //Mojo.Log.error('COUNTER: '+this.pulled_counter+' / '+offset.toArray()[1]+' / Tr:'+this.apiResult.pageTriggered+' == Pa:'+this.apiResult.page+ ' RLTR:'+this.reloadTriggered);
-            if(startOffset.toArray()[1] > 100 && this.reloadTriggered == 0) {
-                this.pulled_counter++;
-                if(this.pulled_counter >= 16) {
-                    this.reloadTriggered = 1;
-                    //this.reloadFirstPage();
-                    ListHandler.reloadFirstPage(this);
-                    this.pulled_counter = 0;
-                }
-            } else if(offset.toArray()[1] < 85 && this.apiResult.pageTriggered == this.apiResult.page){
-                this.pulled_counter++;
-                //Mojo.Log.error('COUNTER: '+this.pulled_counter+' / '+offset.toArray()[1]);
-                if(this.pulled_counter >= 16) {
-                    //Mojo.Log.error('COUNTER TRIGGERED: '+this.pulled_counter);                        
-                    //this.loadNextPage();
-                    ListHandler.loadNextPage(this);
-                    this.pulled_counter = 0;
-                }
-            } else this.pulled_counter = 0;
-        }   
+    ListHandler.scrollerMoved(this);
 };
 
 SearchAssistant.prototype.spinnerAction = function(mode) {
