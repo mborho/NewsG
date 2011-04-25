@@ -68,9 +68,6 @@ MainAssistant.prototype = {
 };
 
 MainAssistant.prototype.openSearch = function() {
-//     this.newsModel["items"] = [];
-//     this.newsUrls = {};
-//     this.controller.modelChanged(this.newsModel);
     StageAssistant.prototype.openSearchScene();        
 };
 
@@ -98,19 +95,13 @@ MainAssistant.prototype.setTopicColor = function(topic, with_items) {
     }
 }    
 
-MainAssistant.prototype.loadDataSource = function(event)
-{
-    //Mojo.Controller.stageController.pushScene( this.listItems[event.index].title.toLowerCase() );
-}
+MainAssistant.prototype.loadDataSource = function(event) {}
 
-MainAssistant.prototype.mainListLoadMore = function(event)
-{
+MainAssistant.prototype.mainListLoadMore = function(event) {
     Mojo.Log.error("Load more newsitems");
-    //Mojo.Controller.stageController.pushScene( this.listItems[event.index].title.toLowerCase() );
 }
 
-MainAssistant.prototype.handleTopicSelect = function(event)
-{
+MainAssistant.prototype.handleTopicSelect = function(event) {
     //Mojo.Log.error("Topic selected: "+event.value);
     this.setTopicColor(event.value);  
     Settings.topic = event.value;
@@ -125,7 +116,6 @@ MainAssistant.prototype.handleTopicSelect = function(event)
 MainAssistant.prototype.editionUpdate = function(edition) {
    Mojo.Log.error('edition updated: '+Settings.ned);
    Settings.ned = edition;
-   this.apiResult.reset();
    Mojo.Controller.stageController.swapScene({name: "main", disableSceneScroller: true});   
 }
 
@@ -174,7 +164,6 @@ MainAssistant.prototype.renderNews = function(data) {
 
             var date = new Date(data[res]['publishedDate']);
             var published = Mojo.Format.formatDate(date,{date:'medium',time:'short'});
-            //var published = date.getDate()+'.'+date.getMonth()+'.'+(1900+date.getYear())+' '+date.getHours()+':'+date.getMinutes();
             var imageData = data[res]['image']
             var imageHtml = ''
             if(Settings.loadImages == "On") {
@@ -216,6 +205,7 @@ MainAssistant.prototype.renderNews = function(data) {
                     image: imageHtml,
                     more_label: gnewsEditions[Settings.ned].more,
                     more_display: more_display,
+                    extra_class: '',
                     relateds: relatedsHtml,
                     display:display,
                     onclick:onClick,
@@ -257,8 +247,8 @@ MainAssistant.prototype.showMoreSources = function(index) {
 }
 
 MainAssistant.prototype._scrollStart = function(event) {
-        //the event object returned is a pointer to the moved event of the list, which returns some cool info about the scrolling of list: position, if its finishing up moving, etc
-        event.addListener(this);
+    //the event object returned is a pointer to the moved event of the list, which returns some cool info about the scrolling of list: position, if its finishing up moving, etc
+    event.addListener(this);
 };
 
 MainAssistant.prototype.moved = function(stopped,position) {

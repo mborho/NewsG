@@ -35,7 +35,7 @@ var Settings = function() {
         dblClick: '',
         mobilizer: '',
         color: '',
-        searchColor: '#1111CC',
+        searchColor: '#4272DB',
         
         loadFromDepot: function() {
             this.loadDefaultEdition();
@@ -92,7 +92,7 @@ var ApiCaller = function() {
     
     return {
         request: function(url, successCall, errorCall) {
-            Mojo.Log.error('API URL: '+url);
+            //Mojo.Log.error('API URL: '+url);
             var request = new Ajax.Request(url,{
             method: 'GET',
             //parameters: {'op': 'getAllRecords', 'table': table},
@@ -261,8 +261,9 @@ StageAssistant.prototype.handleCommand = function(event) {
 	                msg += 'License: GNU General Public License (GPL) Vers.2<br/>';
 	                msg += 'Source: <a href="http://github.com/mborho/newsg">http://github.com/mborho/newsg</a>';
 	                msg += '<br/><br/><div><b>Changelog:</b><br/>'
-	                msg += '<div>* 1.4.2<br/> - pull to refresh gesture added<br/> - more editions<br/> - this changelog</div>';
-	                msg += '<div>* 1.4.0<br/> - taiwanese and korean editions added<br/> - option for opening links with double click added</div>';
+                    msg += '<div>* 1.7.0 - search added - pull to reload gesture added - option for google mobilizer</div>';
+	                msg += '<div>* 1.4.2 - pull to refresh gesture added - more editions - this changelog</div>';
+	                msg += '<div>* 1.4.0 - taiwanese and korean editions added - option for opening links with double click added</div>';
 	                msg += '</div>';
 	                msg += '</small>';
 	                this.controller.showAlertDialog({
@@ -312,7 +313,8 @@ StageAssistant.prototype.getMoreListItem = function() {
     var html = '<div class="no-separator load-more" x-mojo-touch-feedback="immediate" ';
     html += ' id="itemLoadMore">'; 
     html += '<div class="palm-row-wrapper" id="load-more-icon" style="border-bottom:1px solid #fff;">';
-    html += '&#9660</div>';    
-    html += '</div>';
+    //html += '&#9660</div>';    
+    html += '<img src="./icons/down.png" />';
+    html += '</div></div>';
     return html;
 };

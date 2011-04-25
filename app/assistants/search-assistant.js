@@ -21,24 +21,28 @@ SearchAssistant.prototype.setup = function() {
             hintText: "",
             multiline: false,
             enterSubmits: true,
-            focus: true
+            focus: true,
+            autoFocus: true,
+            autoReplace: false,
+            requiresEnterKey: true,
+//             focusMode: Mojo.Widget.focusInsertMode
         },
         this.model = {
             value: '',
             disabled: false
         }
     );
+
+    this.searchField = this.controller.get('searchField');
     
-    this.controller.setupWidget("searchButton",
-        this.attributes = {},
-        this.model = {
-            label : "go",
-            disabled: false,
-            autoFocus: true,
-        }
-    );
+    // search icon
     this.searchHandler = this.handleSearchSubmit.bindAsEventListener(this);
-	Mojo.Event.listen(this.controller.get("searchButton"),Mojo.Event.tap, this.searchHandler);
+    Mojo.Event.listen(this.controller.get("searchCorner"), Mojo.Event.tap, this.searchHandler);
+    
+    this.handleInputBlur = this.onInputBlur.bind(this);    
+    Mojo.Event.listenForFocusChanges(this.searchField, this.handleInputBlur);
+    
+    Mojo.Event.listen(this.searchField, Mojo.Event.propertyChange, this.searchHandler);  
     
      // list widget
      this.newsUrls = {};
@@ -91,22 +95,38 @@ SearchAssistant.prototype.cleanup = function(event) {
 	   a result of being popped off the scene stack */
 };
 
+SearchAssistant.prototype.onInputBlur= function(e) {
+    try {
+        var term = this.searchField.mojo.getValue().replace (/^\s+/, '').replace (/\s+$/, '');
+        if(term.length < 2) {
+            this.searchField.mojo.focus();
+        }
+    } catch(e) {};
+    return true;
+};
+   
 SearchAssistant.prototype.handleSearchSubmit = function(event) {
-    Mojo.Log.error('handling search submit: '+ event);
+//     Mojo.Log.error('handling search submit: '+ event);
     this.apiResult.reset();
+    this.showNoResult('none');
     this.newsModel["items"] = [];
     this.newsUrls = {};
     this.controller.modelChanged(this.newsModel);
-    this.controller.get('searchField').focus = true;
-    this.apiResult.term = this.controller.get('searchField').mojo.getValue();
-    if(this.apiResult.term.length > 2) {
+    this.apiResult.term = this.searchField.mojo.getValue().replace (/^\s+/, '').replace (/\s+$/, '');    
+    if(this.apiResult.term.length > 1) {
+        this.spinnerAction('start');
         this.requestApi();    
+    } else {//if (/*event.target !== this.searchField && */!event.target.up('div#'+this.searchField.id)) {  
+        event.preventDefault();        
+        if(this.apiResult.term.length == 1) {
+            this.showNoResult('block');
+        }
     }    
 };
 
 SearchAssistant.prototype.setSearchColor = function(with_items) {    
     var color = Settings.searchColor;
-    if(with_items == true) {         
+    if(with_items == true) {   
        var elems = $$('#searchContainer div.moreSourcesBox');
        for (i=0;i<=elems.length;i++) {try {elems[i].style.borderColor = color} catch(e) {};}
        var elems = $$('#searchContainer div.moreSourcesBoxWrapper');
@@ -117,10 +137,9 @@ SearchAssistant.prototype.setSearchColor = function(with_items) {
        for (i=0;i<=elems.length;i++) {try {elems[i].style.borderColor = color} catch(e) {};}             
        var elems = $$('#searchContainer  div.moreLabel');
        for (i=0;i<=elems.length;i++) {try {elems[i].style.color = color} catch(e) {};}             
-    } else {
-       var elems = $$('#search div.newsitem');
-       for (i=0;i<=elems.length;i++) {try {elems[i].style.borderColor = color} catch(e) {};}             
     }
+    var elems = $$('div.empty-more-border');
+    for (i=0;i<=elems.length;i++) {try {elems[i].style.borderColor = color} catch(e) {};}             
 } 
 
 SearchAssistant.prototype.requestApi = function() {
@@ -144,7 +163,6 @@ SearchAssistant.prototype.requestSearchSuccess = function(response) {
 SearchAssistant.prototype.renderSearch = function(data) {
     var newData = [];
     var more_display = 'none';
-    var more_display = 'block';
     var onClick = 'StageAssistant.prototype.moreLinkClicked(this);return false;';
     var dblClick = 'return false;';
     if(Settings.dblClick == 'On') {
@@ -156,16 +174,12 @@ SearchAssistant.prototype.renderSearch = function(data) {
         res = j;
         try {
             var url = decodeURIComponent(data[res]['url']);
-//             if(Settings.googleRedirect == "On") {
-//                 url = data[res]['signedRedirectUrl'];
-//             }
             var headline = data[res]['titleNoFormatting'];
             var content = data[res]['content'];
             var publisher = data[res]['publisher'];
 
             var date = new Date(data[res]['publishedDate']);
             var published = Mojo.Format.formatDate(date,{date:'medium',time:'short'});
-            //var published = date.getDate()+'.'+date.getMonth()+'.'+(1900+date.getYear())+' '+date.getHours()+':'+date.getMinutes();
             var imageData = data[res]['image']
             var imageHtml = ''
             if(Settings.loadImages == "On") {
@@ -177,40 +191,44 @@ SearchAssistant.prototype.renderSearch = function(data) {
             }
             var relatedsHtml = ''
 
+            var more_display = 'block';
+            var extra_class = '';
             try {
                 var rel = data[res]['relatedStories']; 
                 for (i=0;i<=rel.length;i++) {
                     var mUrl = rel[i]['unescapedUrl'];
-//                     if(Settings.googleRedirect == "On") {
-//                         mUrl = rel[i]['signedRedirectUrl']
-//                     }
                     relatedsHtml += '<div><a href="'+mUrl+'" class="moreLink" ';
                     relatedsHtml += 'onClick="'+onClick+'" onDblClick="'+dblClick+'"';
                     relatedsHtml += '>'+rel[i]['titleNoFormatting']+'</a>&#160;&#160;<span class="morePublisher">'+rel[i]['publisher']+'</span></div>';
                 }
             } catch(e) {}    
-                itemIndex = (this.apiResult.page*this.apiResult.pageLength)+res
-                var add = true;
-                var display = 'block';          
-                if(this.newsUrls.hasOwnProperty(url)) {
-                    display = 'none';
-                    Mojo.Log.error('ALREADY EXISTS'+url);
-                }
-                this.newsUrls[url] = 1;
-                newData[res] = {
-                    index: itemIndex,
-                    title: headline, 
-                    href:url, 
-                    teaser: content, 
-                    publisher:publisher,
-                    date: published,
-                    image: imageHtml,
-                    more_label: gnewsEditions[Settings.ned].more,
-                    more_display: more_display,
-                    relateds: relatedsHtml,
-                    display:display,
-                    onclick:onClick,
-                    ondblclick:dblClick              
+            if(relatedsHtml == '') {
+                more_display = 'none';
+                extra_class = 'empty-more-border';
+            }
+            itemIndex = (this.apiResult.page*this.apiResult.pageLength)+res
+            var add = true;
+            var display = 'block';          
+            if(this.newsUrls.hasOwnProperty(url)) {
+                display = 'none';
+                Mojo.Log.error('ALREADY EXISTS'+url);
+            }
+            this.newsUrls[url] = 1;
+            newData[res] = {
+                index: itemIndex,
+                title: headline, 
+                href:url, 
+                teaser: content, 
+                publisher:publisher,
+                date: published,
+                image: imageHtml,
+                more_label: gnewsEditions[Settings.ned].more,
+                more_display: more_display,
+                extra_class: extra_class,
+                relateds: relatedsHtml,
+                display:display,
+                onclick:onClick,
+                ondblclick:dblClick              
             }                          
         } catch(e) {
           Mojo.Log.error(e);
@@ -222,9 +240,12 @@ SearchAssistant.prototype.renderSearch = function(data) {
     } else {
        this.newsUrls = [];
        this.newsModel["items"] = newData;
+       if(newData.length == 0) {
+            this.showNoResult('block');
+       }
     }
     this.controller.modelChanged(this.newsModel);
-    this.setSearchColor((more_display=='block'));      
+    this.setSearchColor(true);      
     if(this.apiResult.page+1 <= this.apiResult.getMaxPage() && newData.length == this.apiResult.pageLength) {
         $("searchlist").insert(StageAssistant.prototype.getMoreListItem());
         //this.loadMoreHandler = ListHandler.loadNextPage.bindAsEventListener(this);    
@@ -237,7 +258,7 @@ SearchAssistant.prototype.renderSearch = function(data) {
        this.apiResult.pageTriggered = this.apiResult.page;
     }
 }
-
+    
 SearchAssistant.prototype._scrollStart = function(event) {
     //the event object returned is a pointer to the moved event of the list, which returns some cool info about the scrolling of list: position, if its finishing up moving, etc
     event.addListener(this);
@@ -246,6 +267,10 @@ SearchAssistant.prototype._scrollStart = function(event) {
 SearchAssistant.prototype.moved = function(stopped,position) {
     ListHandler.scrollerMoved(this);
 };
+
+SearchAssistant.prototype.showNoResult = function(display) {
+    this.controller.get('searchNoResult').style.display = display;
+}
 
 SearchAssistant.prototype.spinnerAction = function(mode) {
    var spinner_id = 'search_spinner';

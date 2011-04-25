@@ -33,8 +33,6 @@
 	}
 	.topicSelector {
 		border-bottom:1px solid #fff;
-/*         border-right:1px solid #fff; */
-/*         border:1px solid #000; */
 		color:#fff;
 		height:50px;
         width:220px;
@@ -43,12 +41,10 @@
 	.topicColorBox, .searchColorBox {
 		width:50px;
 		height:51px;
-/* 		margin-right:10px; */
 		background-color:#fff;
 		float:left;
 	}
     .searchCorner {
-/*         background-color:#fff; */
         float:right;
         width:50px;
         height:50px;
@@ -64,18 +60,31 @@
     .searchInput {
         height:51px;
         margin-bottom:0px;
-        border-bottom:1px solid #1111CC;
+        border-bottom:1px solid #4272DB;
     }
     .searchColorBox {        
-        background-color:#1111CC;
+        background-color:#4272DB;
         height:50px;
     }
+    .searchInput .searchCorner {
+        background-color:#4272DB;
+        border-bottom:1px solid #4272DB;
+    }
     .searchField {
-        width:180px;
+        width:202px;
         height:35;
         float:left;
-        margin-top:7px;
+        margin-top:12px;
         margin-left:10px;
+        color: #4272DB;
+    }
+    .searchField input {
+        margin-top:-3px !important;
+        margin-left:-3px !important;
+        border-width:thin;
+        border-color:#4272DB;
+        color: #4272DB;
+        width:200px;
     }
     .searchButton {
         width:70px; 
@@ -85,6 +94,23 @@
         height:25px;
         float:right;
         font-size:10px;
+    }
+    .searchIcon {
+        border:0;
+        margin-right:auto;
+        margin-left:auto;
+        margin-top:11px;
+        width:28px;
+        height:28px;
+    }    
+    .searchNoResult {
+        display:none;
+        width:201px;
+        text-align:center;
+        margin:30px auto 20px auto;
+        font-size:24px;
+        font-weight:bold;
+        color:#4272DB;
     }
     /* result list widget */
 	.newsitem {
@@ -163,6 +189,10 @@
    text-align:center;
    padding-top:10px;
  }
+.load-more img {
+    height:24px;
+    height:24px;
+}
  .prefs-label {
    padding-top:12px;
    padding-left:10px;
