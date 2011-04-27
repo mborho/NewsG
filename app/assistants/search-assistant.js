@@ -248,13 +248,12 @@ SearchAssistant.prototype.renderSearch = function(data) {
     this.setSearchColor(true);      
     if(this.apiResult.page+1 <= this.apiResult.getMaxPage() && newData.length == this.apiResult.pageLength) {
         $("searchlist").insert(StageAssistant.prototype.getMoreListItem());
-        //this.loadMoreHandler = ListHandler.loadNextPage.bindAsEventListener(this);    
         this.controller.listen("itemLoadMore", Mojo.Event.tap, ListHandler.loadNextPage.bind(this, this))
     }
     if(this.apiResult.page == 1) {
        this.reloadTriggered = 0;
        this.controller.get('searchScroller').mojo.revealTop()
-    } else {
+    } else if(this.apiResult.getMaxPage() > this.apiResult.page) {
        this.apiResult.pageTriggered = this.apiResult.page;
     }
 }

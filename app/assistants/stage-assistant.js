@@ -185,7 +185,7 @@ var ListHandler = function() {
             if(itemNode && startNode){                
                     var startOffset = Element.viewportOffset(startNode); 
                     var offset = Element.viewportOffset(itemNode); 
-                    //Mojo.Log.error('COUNTER: '+this.pulled_counter+' / '+offset.toArray()[1]+' / Tr:'+this.apiResult.pageTriggered+' == Pa:'+this.apiResult.page+ ' RLTR:'+this.reloadTriggered);
+                    //Mojo.Log.error('COUNTER: '+assistant.pulled_counter+' / '+offset.toArray()[1]+' / Tr:'+assistant.apiResult.pageTriggered+' == Pa:'+assistant.apiResult.page+ ' MAX: '+assistant.apiResult.getMaxPage()+' RLTR:'+assistant.reloadTriggered);
                     if(startOffset.toArray()[1] > 100 && assistant.reloadTriggered == 0) {
                         assistant.pulled_counter++;
                         if(assistant.pulled_counter >= 16) {
@@ -194,9 +194,9 @@ var ListHandler = function() {
                             this.reloadFirstPage(assistant);
                             assistant.pulled_counter = 0;
                         }
-                    } else if(offset.toArray()[1] < 85 && assistant.apiResult.pageTriggered == assistant.apiResult.page){
+                    } else if(offset.toArray()[1] < 85 && assistant.apiResult.pageTriggered == assistant.apiResult.page) {
                         assistant.pulled_counter++;
-                        //Mojo.Log.error('COUNTER: '+this.pulled_counter+' / '+offset.toArray()[1]);
+                        //Mojo.Log.error('COUNTER: '+assistant.pulled_counter+' / '+offset.toArray()[1]);
                         if(assistant.pulled_counter >= 16) {
                             //Mojo.Log.error('COUNTER TRIGGERED: '+this.pulled_counter);                        
                             //this.loadNextPage();

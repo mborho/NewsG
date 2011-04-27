@@ -226,13 +226,12 @@ MainAssistant.prototype.renderNews = function(data) {
     this.setTopicColor(Settings.topic, (more_display=='block'));      
     if(this.apiResult.page+1 <= this.apiResult.getMaxPage() && newData.length == this.apiResult.pageLength) {
         $('newslist').insert(StageAssistant.prototype.getMoreListItem());
-//         this.loadMoreHandler = ListHandler.loadNextPage.bindAsEventListener(this);    
         this.controller.listen("itemLoadMore", Mojo.Event.tap, ListHandler.loadNextPage.bind(this, this))
     }
     if(this.apiResult.page == 1) {
        this.reloadTriggered = 0;
        this.controller.get('newsScroller').mojo.revealTop()
-    } else {
+    } else if(this.apiResult.getMaxPage() > this.apiResult.page) {
        this.apiResult.pageTriggered = this.apiResult.page;
     }
 }
