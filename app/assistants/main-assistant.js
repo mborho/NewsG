@@ -231,6 +231,9 @@ MainAssistant.prototype.renderNews = function(data) {
     if(this.apiResult.page == 1) {
        this.reloadTriggered = 0;
        this.controller.get('newsScroller').mojo.revealTop()
+       if(this.apiResult.getMaxPage() == 1) {
+          this.apiResult.pageTriggered = 0;
+       }
     } else if(this.apiResult.getMaxPage() > this.apiResult.page) {
        this.apiResult.pageTriggered = this.apiResult.page;
     }
