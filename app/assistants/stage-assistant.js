@@ -35,6 +35,20 @@ var Settings = function() {
         dblClick: '',
         mobilizer: '',
         color: '',
+        topicsOrder: [],
+        topics: {
+            "h":  {label: "Top Stories", value: "h"},
+            "w":  {label: "World", value: "w"},
+            "n":  {label: "National", value: "n"},
+            "b":  {label: "Business", value: "b"},            
+            "t":  {label: "Science/Technology", value: "t"},
+            "p":  {label: "Politics", value: "p"},
+            "e":  {label: "Entertainment", value: "e"},
+            "s":  {label: "Sports", value: "s"},
+            "m":  {label: "Health", value: "m"},
+            "ir": {label: "Spotlight", value: "ir"},
+            "po": {label: "Most Popular", value: "po"}
+        },                    
         searchColor: '#4272DB',
         
         loadFromDepot: function() {
@@ -43,6 +57,7 @@ var Settings = function() {
             this.loadDefaultDblClick();
             this.loadDefaultMobilizer();
             this.loadDefaultImgLoad();
+            this.loadTopicsOrder();
         },
         
         loadDefaultEdition: function() {
@@ -84,7 +99,35 @@ var Settings = function() {
                     if(value != '') Settings.loadImages = value;              
                     else Settings.loadImages = 'On';
                 }, dbFailure);
-        },        
+        }, 
+        
+        loadTopicsOrder: function() {
+            db.get('settings.topicsOrder', function(response) {
+                    var value = getDepotValue(response);
+                    if(value != '') {
+                        Settings.topicsOrder = value;              
+                    } else {
+                        Settings.topicsOrder = ["h","w","n","b","t","p","e","s","m","ir","po"];
+                    }
+                }, dbFailure);
+        },   
+                
+        getManagedTopics: function() {
+            var topics = [];
+            for(i=0;i<this.topicsOrder.length;i++) {
+                topics.push(this.topics[this.topicsOrder[i]]);
+            }
+            return topics;
+        },
+        
+        getEditionTopics: function() {
+            var topics = [];
+            for(i=0;i<this.topicsOrder.length;i++) {
+                topics.push({label: getTopicLabel(this.ned, this.topicsOrder[i]), value:this.topicsOrder[i]});
+            }
+            return topics;
+        }
+        
     }    
 }();   
 
@@ -234,6 +277,7 @@ StageAssistant.prototype.setup = function() {
      visible: true,
      items: [
        {label: "Edition", command: 'do-edition', shortcut: 'e'},
+       {label: "Manage Topics", command: 'do-topics', shortcut: 't'},
        {label: "Settings", command: 'do-prefs', shortcut: 'p'},
        {label: "About", command: 'do-about', shortcut: 'a'},
      ]
@@ -282,6 +326,12 @@ StageAssistant.prototype.handleCommand = function(event) {
 	                   assistant: new EditionDialogAssistant(this)
 	                });
 	                break;
+                case 'do-topics':
+                    this.controller.showDialog({
+                       template: 'main/topics-dialog',
+                       assistant: new TopicsDialogAssistant(this)
+                    });
+                    break;                    
 	            case 'do-prefs':
 	                this.controller.showDialog({
 	                   template: 'main/prefs-dialog',

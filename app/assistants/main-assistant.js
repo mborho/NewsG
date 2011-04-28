@@ -31,7 +31,7 @@ MainAssistant.prototype = {
     // handler for pull to refesh
     this.controller.listen("newsScroller",Mojo.Event.scrollStarting, this._scrollStart.bind(this));
     
-    this.topicModel = getEditionTopics(Settings.ned);
+    this.topicModel = Settings.getEditionTopics();
     this.controller.setupWidget("topicSelector",
         this.attributes = {
            choices: this.topicModel
