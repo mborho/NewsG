@@ -20,19 +20,7 @@ var PreferencesDialogAssistant = Class.create({
          this.defaultEditionSelectorHandler = this.handleDefaultEditionSelect.bindAsEventListener(this);    
          this.controller.listen("defaultEditionSelector", Mojo.Event.propertyChange, this.defaultEditionSelectorHandler);        
                                    
-        this.defaultTopicModel = [
-            {label: "Top Stories", value: "h"},
-            {label: "World", value: "w"},
-            {label: "National", value: "n"},
-            {label: "Business", value: "b"},            
-            {label: "Science/Technology", value: "t"},
-            {label: "Politics", value: "p"},
-            {label: "Entertainment", value: "e"},
-            {label: "Sports", value: "s"},
-            {label: "Health", value: "m"},
-            {label: "Spotlight", value: "ir"},
-            {label: "Most Popular", value: "po"}
-        ]
+        this.defaultTopicModel = Settings.getManagedTopics();
         var topicLabel = getTopicLabel('us', Settings.defaultTopic);
         if(Settings.defaultTopic == 'n') topicLabel = 'National';
 
