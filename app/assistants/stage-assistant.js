@@ -35,7 +35,8 @@ var Settings = function() {
         dblClick: '',
         mobilizer: '',
         color: '',
-        topicsOrder: [],
+        topicsOrder: false,
+        topicsHidden: false,
         topics: {
             "h":  {label: "Top Stories", value: "h"},
             "w":  {label: "World", value: "w"},
@@ -58,6 +59,7 @@ var Settings = function() {
             this.loadDefaultMobilizer();
             this.loadDefaultImgLoad();
             this.loadTopicsOrder();
+            this.loadTopicsHidden();
         },
         
         loadDefaultEdition: function() {
@@ -101,7 +103,7 @@ var Settings = function() {
                 }, dbFailure);
         }, 
         
-        loadTopicsOrder: function() {
+        loadTopicsOrder: function() {            
             db.get('settings.topicsOrder', function(response) {
                     var value = getDepotValue(response);
                     if(value != '') {
@@ -110,12 +112,37 @@ var Settings = function() {
                         Settings.topicsOrder = ["h","w","n","b","t","p","e","s","m","ir","po"];
                     }
                 }, dbFailure);
+        }, 
+        
+        loadTopicsHidden: function() {
+            db.get('settings.topicsHidden', function(response) {
+                    var value = getDepotValue(response);
+                    if(value != '') {
+                        Settings.topicsHidden = value;              
+                    } else {
+                        Settings.topicsHidden = [];
+                    }
+                }, dbFailure);
         },   
-                
+            
+        isHiddenTopic: function(topic) {
+            for(jj=0;jj < Settings.topicsHidden.length;jj++) {
+                if(topic == this.topicsHidden[jj]) {
+                    return true;
+                }
+            }
+            return false;
+        }, 
+        
         getManagedTopics: function() {
             var topics = [];
             for(i=0;i<this.topicsOrder.length;i++) {
-                topics.push(this.topics[this.topicsOrder[i]]);
+                var data = this.topics[this.topicsOrder[i]];
+                data.visibility = 'show';
+                if(this.isHiddenTopic(this.topicsOrder[i])) {
+                    data.visibility = 'hidden';
+                }
+                topics.push(data);
             }
             return topics;
         },
@@ -123,7 +150,9 @@ var Settings = function() {
         getEditionTopics: function() {
             var topics = [];
             for(i=0;i<this.topicsOrder.length;i++) {
-                topics.push({label: getTopicLabel(this.ned, this.topicsOrder[i]), value:this.topicsOrder[i]});
+                if(this.isHiddenTopic(this.topicsOrder[i]) === false) {
+                    topics.push({label: getTopicLabel(this.ned, this.topicsOrder[i]), value:this.topicsOrder[i]});
+                }
             }
             return topics;
         }
@@ -257,9 +286,11 @@ Settings.loadFromDepot();
 var interValId = false
 function settingsChecker () {
   Mojo.Log.error('Waiting for settings: ' + intervalId); 
+  Mojo.Log.error();
   if(Settings.defaultNed != '' && Settings.defaultTopic != '' 
         && Settings.loadImages != ''  && Settings.dblClick != ''
-            && Settings.mobilizer != '') {
+            && Settings.mobilizer != '' && Settings.topicsOrder != false
+                && Settings.topicsHidden !== false) {
       Settings.ned = Settings.defaultNed;
       Settings.topic = Settings.defaultTopic;
       clearInterval(intervalId);
