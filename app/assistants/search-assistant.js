@@ -108,6 +108,7 @@ SearchAssistant.prototype.onInputBlur= function(e) {
 SearchAssistant.prototype.handleSearchSubmit = function(event) {
 //     Mojo.Log.error('handling search submit: '+ event);
     this.apiResult.reset();
+    $('searchStartIcon').hide();
     this.showNoResult('none');
     this.newsModel["items"] = [];
     this.newsUrls = {};
