@@ -1,3 +1,6 @@
+// Copyright 2011 Martin Borho <martin@borho.net>
+// GPL2 - see license.txt for details
+
 var PreferencesDialogAssistant = Class.create({
   
     initialize: function(sceneAssistant) {

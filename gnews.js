@@ -1,3 +1,6 @@
+// Copyright 2011 Martin Borho <martin@borho.net>
+// GPL2 - see license.txt for details
+
 var gnewsColors = {
   "h":"#6B90DA",
   "w":"#FFC300",

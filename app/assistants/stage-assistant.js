@@ -1,3 +1,6 @@
+// Copyright 2011 Martin Borho <martin@borho.net>
+// GPL2 - see license.txt for details
+
 var db= new Mojo.Depot ({name:"NewsGDb",version:1,replace:false}, dbOpenOK, dbOpenFail);
 function dbOpenOK() {
    Mojo.Log.error('DATABASE OK: '+db);

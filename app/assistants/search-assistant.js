@@ -1,3 +1,6 @@
+// Copyright 2011 Martin Borho <martin@borho.net>
+// GPL2 - see license.txt for details
+
 function SearchAssistant() {
 	/* this is the creator function for your scene assistant object. It will be passed all the 
 	   additional parameters (after the scene name) that were passed to pushScene. The reference
