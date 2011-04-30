@@ -235,7 +235,7 @@ var gnewsEditions = {
         more : "Más fuentes",
         topics : [
             {label: "Noticias destacadas", value: "h"},
-            {label: "Internaticonal", value: "w"},
+            {label: "Internacional", value: "w"},
             {label: "España", value: "n"},
             {label: "Economía", value: "b"},
             {label: "Ciencia y Tecnología", value: "t"},
@@ -252,7 +252,7 @@ var gnewsEditions = {
         name : "Portugal",
         more : "Mais fontes",
         topics : [
-            {label: "Top Stories", value: "h"},
+            {label: "Notícias principais", value: "h"},
             {label: "Mundo", value: "w"},
             {label: "Portugal", value: "n"},
             {label: "Negócios", value: "b"},            
@@ -391,6 +391,24 @@ var gnewsEditions = {
             {label: "Legnépszerűbb témakörök", value: "po"}
         ]
     },    
+    "el_gr" : {
+        ned : "el_gr",
+        name : "Ελλάδα",
+        more : "Περισσότερες πηγές",
+        topics : [
+            {label: "Κυριότερες ειδήσειςΚυριότερες ειδήσεις", value: "h"},
+            {label: "Κόσμος", value: "w"},
+            {label: "Ελλάδα", value: "n"},
+            {label: "Εργασία", value: "b"},            
+            {label: "Επιστήμη και τεχνολογία", value: "t"},
+            {label: "Πολιτική", value: "p"},
+            {label: "Ψυχαγωγία", value: "e"},
+            {label: "Αθλητικά", value: "s"},
+            {label: "Υγεία", value: "m"},//None
+            {label: "Αφιέρωμα", value: "ir"},//None
+            {label: "Πιο Δημοφιλή", value: "po"}
+        ]
+    },      
     "tr_tr" : {
         ned : "tr_tr",
         name : "Türkiye",
@@ -433,7 +451,7 @@ var gnewsEditions = {
         more : "Más fuentes",
         topics : [
             {label: "Noticias destacadas", value: "h"},
-            {label: "Internaticonal", value: "w"},
+            {label: "Internacional", value: "w"},
             {label: "Estados Unidos", value: "n"},
             {label: "Economía", value: "b"},
             {label: "Ciencia y Tecnología", value: "t"},
@@ -462,7 +480,61 @@ var gnewsEditions = {
             {label: "Destacados", value: "ir"},
             {label: "Más popular", value: "po"},
         ]
-    },      
+    },        
+    "es_ar" : {
+        ned : "es_ar",
+        name : "Argentina",
+        more : "Más fuentes",
+        topics : [
+            {label: "Noticias destacadas", value: "h"},
+            {label: "Internacional", value: "w"},
+            {label: "Argentina", value: "n"},
+            {label: "Economía", value: "b"},
+            {label: "Ciencia y Tecnología", value: "t"},
+            {label: "Política", value: "p"},
+            {label: "Espectáculos", value: "e"},
+            {label: "Deportes", value: "s"},
+            {label: "Salud", value: "m"},
+            {label: "Destacados", value: "ir"},
+            {label: "Más popular", value: "po"},
+        ]
+    },    
+    "pt-BR_br" : {
+        ned : "pt-BR_br",
+        name : "Brasil",
+        more : "Mais fontes",
+        topics : [
+            {label: "Notícias principais", value: "h"},
+            {label: "Mundo", value: "w"},
+            {label: "Brasil", value: "n"},
+            {label: "Negócios", value: "b"},            
+            {label: "Ciência/Tecnologia", value: "t"},
+            {label: "Política", value: "p"},
+            {label: "Entretenimento", value: "e"},
+            {label: "Esportes", value: "s"},
+            {label: "Saúde", value: "m"},
+            {label: "Em destaque", value: "ir"},//None
+            {label: "Mais populares", value: "po"}
+        ]
+    },        
+    "en_za" : {
+        ned : "en_za",
+        name : "South Africa",
+        more : "More sources",
+        topics : [
+            {label: "Top Stories", value: "h"},
+            {label: "World", value: "w"},
+            {label: "South Africa", value: "n"},
+            {label: "Business", value: "b"},
+            {label: "Sci/Tech", value: "t"},
+            {label: "Politics", value: "p"},
+            {label: "Entertainment", value: "e"},
+            {label: "Sports", value: "s"},
+            {label: "Health", value: "m"},
+            {label: "Spotlight", value: "ir"},
+            {label: "Most Popular", value: "po"}
+        ]
+    },         
     "au" : {
         ned : "au",
         name : "Australia",
@@ -480,7 +552,25 @@ var gnewsEditions = {
             {label: "Spotlight", value: "ir"},
             {label: "Most Popular", value: "po"}
         ]
-    },    
+    },      
+    "nz" : {
+        ned : "nz",
+        name : "New Zealand",
+        more : "More sources",
+        topics : [
+            {label: "Top Stories", value: "h"},
+            {label: "World", value: "w"},
+            {label: "New Zealand", value: "n"},
+            {label: "Business", value: "b"},
+            {label: "Sci/Tech", value: "t"},
+            {label: "Politics", value: "p"},
+            {label: "Entertainment", value: "e"},
+            {label: "Sports", value: "s"},
+            {label: "Health", value: "m"},
+            {label: "Spotlight", value: "ir"},
+            {label: "Most Popular", value: "po"}
+        ]
+    },      
     "jp" : {
         ned : "jp",
         name : "日本 (Japan)",
@@ -570,8 +660,7 @@ var gnewsEditions = {
             {label: "관심뉴스", value: "ir"},//None
             {label: "인기뉴스", value: "po"}
         ]
-    },
-        
+    },    
 }
 
 function getEditionLabel(edition) {
