@@ -20,6 +20,7 @@ var TopicsDialogAssistant = Class.create({
           {"items": Settings.getManagedTopics()}
         );
         this.controller.listen("manageTopicsList", Mojo.Event.listReorder , this.handleReordering.bindAsEventListener(this));        
+        this.controller.listen("manageTopicsList", Mojo.Event.listTap , this.handleHiding.bindAsEventListener(this));        
     },
  
     cleanup: function (widget) {
@@ -38,20 +39,22 @@ var TopicsDialogAssistant = Class.create({
         db.add('settings.topicsOrder', {"value":Settings.topicsOrder}, dbSuccess, dbFailure);
         this.refresh = true;
     },
-    
-    handleHiding: function(icon, topic) {
+
+    handleHiding: function(event) {
+        var topic = event.item.value
+        var icon = $('topicEye_'+topic)
         var icon_src = './icons/visibility_';
         if( Settings.isHiddenTopic(topic)) {
             Settings.topicsHidden.splice(Settings.topicsHidden.indexOf(topic),1); 
             icon.src = icon_src+'show.png';
-            $('topicTitle_'+topic).style.color = '#000';
         } else {
             Settings.topicsHidden.push(topic);
             icon.src = icon_src+'hidden.png';
-            $('topicTitle_'+topic).style.color = 'grey';
         }
+        Mojo.Log.error(Settings.topicsHidden);
         db.add('settings.topicsHidden', {"value": Settings.topicsHidden}, dbSuccess, dbFailure);
         this.refresh = true;
     }
+
 });
 
