@@ -32,6 +32,7 @@ var Settings = function() {
     return {
         scrollerHeight: '402px',
         dialogScrollerHeight: '360px',
+        settingsDialogHeight: '430px',
         triggerPoint: 85,
         defaultTopic: '',
         topic: '',
@@ -73,6 +74,7 @@ var Settings = function() {
             if(Mojo.Environment.DeviceInfo.screenHeight == 400) {
                 Settings.scrollerHeight = '322px';
                 Settings.dialogScrollerHeight = '280px';
+                Settings.settingsDialogHeight = '350px';
                 Settings.triggerPoint = 20;
             }
         },
