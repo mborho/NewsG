@@ -75,6 +75,8 @@ var PreferencesDialogAssistant = Class.create({
          ); 
          this.mobilizerHandler = this.handleMobilizerSelect.bindAsEventListener(this);    
          this.controller.listen("defaultMobilizer", Mojo.Event.propertyChange, this.mobilizerHandler);           
+         
+         this.controller.get("settings-dialog").style.height = Settings.dialogScrollerHeight+10;
     },
  
     cleanup: function (widget) {
