@@ -24,6 +24,7 @@ var EditionDialogAssistant = Class.create({
           this.editionModel
         );
         this.controller.listen("editionListWgt", Mojo.Event.listTap, this.handleSelect.bindAsEventListener(this));
+        this.controller.get("editionScroller").style.height = Settings.dialogScrollerHeight;
     },
  
     handleSelect: function(event) {        

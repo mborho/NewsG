@@ -24,6 +24,8 @@ var TopicsDialogAssistant = Class.create({
         );
         this.controller.listen("manageTopicsList", Mojo.Event.listReorder , this.handleReordering.bindAsEventListener(this));        
         this.controller.listen("manageTopicsList", Mojo.Event.listTap , this.handleHiding.bindAsEventListener(this));        
+        
+        this.controller.get("manageTopicsScroller").style.height = Settings.dialogScrollerHeight;
     },
  
     cleanup: function (widget) {
