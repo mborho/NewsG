@@ -31,6 +31,7 @@ var Settings = function() {
     
     return {
         scrollerHeight: '402px',
+        triggerPoint: 85,
         defaultTopic: '',
         topic: '',
         defaultNed: '',
@@ -70,6 +71,7 @@ var Settings = function() {
         setDeviceSettings: function() {
             if(Mojo.Environment.DeviceInfo.screenHeight == 400) {
                 Settings.scrollerHeight = '322px';
+                Settings.triggerPoint = 20;
             }
         },
         
@@ -277,7 +279,7 @@ var ListHandler = function() {
                             this.reloadFirstPage(assistant);
                             assistant.pulled_counter = 0;
                         }
-                    } else if(offset.toArray()[1] < 85 && assistant.apiResult.pageTriggered == assistant.apiResult.page) {
+                    } else if(offset.toArray()[1] < Settings.triggerPoint && assistant.apiResult.pageTriggered == assistant.apiResult.page) {
                         assistant.pulled_counter++;
                         //Mojo.Log.error('COUNTER: '+assistant.pulled_counter+' / '+offset.toArray()[1]);
                         if(assistant.pulled_counter >= 16) {
