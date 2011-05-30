@@ -30,6 +30,7 @@ var Settings = function() {
         };
     
     return {
+        scrollerHeight: '402px',
         defaultTopic: '',
         topic: '',
         defaultNed: '',
@@ -37,7 +38,7 @@ var Settings = function() {
         loadImages: '',
         dblClick: '',
         mobilizer: '',
-        color: '',
+        color: '',        
         topicsOrder: false,
         topicsHidden: false,
         topics: {
@@ -56,6 +57,7 @@ var Settings = function() {
         searchColor: '#4272DB',
         
         loadFromDepot: function() {
+            this.setDeviceSettings();
             this.loadDefaultEdition();
             this.loadDefaultTopic();
             this.loadDefaultDblClick();
@@ -63,6 +65,12 @@ var Settings = function() {
             this.loadDefaultImgLoad();
             this.loadTopicsOrder();
             this.loadTopicsHidden();
+        },
+        
+        setDeviceSettings: function() {
+            if(Mojo.Environment.DeviceInfo.screenHeight == 400) {
+                Settings.scrollerHeight = '322px';
+            }
         },
         
         loadDefaultEdition: function() {
@@ -274,7 +282,6 @@ var ListHandler = function() {
                         //Mojo.Log.error('COUNTER: '+assistant.pulled_counter+' / '+offset.toArray()[1]);
                         if(assistant.pulled_counter >= 16) {
                             //Mojo.Log.error('COUNTER TRIGGERED: '+this.pulled_counter);                        
-                            //this.loadNextPage();
                             this.loadNextPage(assistant);
                             assistant.pulled_counter = 0;
                         }

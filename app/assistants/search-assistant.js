@@ -74,6 +74,10 @@ SearchAssistant.prototype.setup = function() {
         this.attributes = {spinnerSize: "small"},
         this.model = {spinning: false }
     ); 
+
+    // set scroller height
+    this.controller.get('searchScroller').style.height = Settings.scrollerHeight;    
+    this.controller.get('searchContainer').style.height = Settings.scrollerHeight;    
     
     /* add event handlers to listen to events from widgets */
     

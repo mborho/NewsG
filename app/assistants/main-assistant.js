@@ -32,7 +32,7 @@ MainAssistant.prototype = {
     this.controller.listen(this.resultWidgetName, Mojo.Event.listTap, function(event){});
     
     // handler for pull to refesh
-    this.controller.listen("newsScroller",Mojo.Event.scrollStarting, this._scrollStart.bind(this));
+    this.controller.listen("newsScroller",Mojo.Event.scrollStarting, this._scrollStart.bind(this));    
     
     this.topicModel = Settings.getEditionTopics();
     this.controller.setupWidget("topicSelector",
@@ -59,6 +59,11 @@ MainAssistant.prototype = {
         this.attributes = {spinnerSize: "small"},
         this.model = {spinning: false }
     ); 
+    
+    // set scroller height
+    this.controller.get('newsScroller').style.height = Settings.scrollerHeight;    
+    this.controller.get('newsContainer').style.height = Settings.scrollerHeight;    
+    
     this.apiResult.reset();
     this.requestApi();
     this.setTopicColor(Settings.topic);
