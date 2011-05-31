@@ -1,6 +1,6 @@
 {
 	"id": "com.borho.newsg",
-	"version": "1.9.5",
+	"version": "2.0.0",
 	"vendor": "Martin Borho",
 	"type": "web",
 	"main": "index.html",
