@@ -39,6 +39,10 @@ SearchAssistant.prototype.setup = function() {
     this.searchField = this.controller.get('searchField');
     
     // search icon
+    this.searchOrderHandler = this.handleSearchOrder.bindAsEventListener(this);
+    Mojo.Event.listen(this.controller.get("searchOrder"), Mojo.Event.tap, this.searchOrderHandler);
+    
+    // search icon
     this.searchHandler = this.handleSearchSubmit.bindAsEventListener(this);
     Mojo.Event.listen(this.controller.get("searchCorner"), Mojo.Event.tap, this.searchHandler);
     
@@ -111,7 +115,20 @@ SearchAssistant.prototype.onInputBlur= function(e) {
     } catch(e) {};
     return true;
 };
-   
+
+SearchAssistant.prototype.handleSearchOrder = function(event) {
+    if(Settings.searchOrder == 'Rel') {
+        this.controller.get('searchOrderRel').style.display = 'none';
+        this.controller.get('searchOrderDate').style.display = 'block';
+        Settings.searchOrder = 'Date';
+    } else if(Settings.searchOrder == 'Date') {
+        this.controller.get('searchOrderRel').style.display = 'block';
+        this.controller.get('searchOrderDate').style.display = 'none';
+        Settings.searchOrder = 'Rel';
+    }
+    if(this.newsModel["items"].length > 0) ListHandler.reloadFirstPage(this);
+};
+
 SearchAssistant.prototype.handleSearchSubmit = function(event) {
 //     Mojo.Log.error('handling search submit: '+ event);
     this.apiResult.reset();
@@ -156,6 +173,7 @@ SearchAssistant.prototype.requestApi = function() {
         var start = (this.apiResult.page-1)*this.apiResult.pageLength;
         var url = 'http://ajax.googleapis.com/ajax/services/search/news?v=1.0';
         url += '&ned='+Settings.ned+'&rsz=large&q='+encodeURIComponent(term)+'&start='+start;
+        if(Settings.searchOrder == 'Date') url += '&scoring=d';
         ApiCaller.request(url,this.requestSearchSuccess.bind(this), function(){
                 Mojo.Log.error('Failed to get Ajax response');
                 this.spinnerAction('stop');

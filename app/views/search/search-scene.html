@@ -1,8 +1,13 @@
 <div id="main" class="main">
     <div class="palm-row  no-separator searchInput"  style="">
         <div class="palm-row-wrappers searchRow" id="searchRow" >
-            <div class="searchColorBox" id="searchColorBox">&#160;</div>
-            <div x-mojo-element="TextField" id="searchField" class="searchField" name="searchField"></div>
+            <div class="searchColorBox" id="searchColorBox">
+                <div id="searchOrder" class="searchOrder" x-mojo-touch-feedback="delayed">
+                    <img src="./icons/search_sort_rel.png" id="searchOrderRel" class="searchOrderRel" />
+                    <img src="./icons/search_sort_date.png" id="searchOrderDate" class="searchOrderDate" />
+                </div>
+            </div>
+            <div x-mojo-element="TextField" id="searchField" class="searchField" name="searchField"></div>            
             <div id="searchCorner" class="searchCorner" x-mojo-touch-feedback="delayed">
                 <img src="./icons/search.png" class="searchIcon" />
             </div>
