@@ -351,7 +351,7 @@ StageAssistant.prototype.handleCommand = function(event) {
 	                msg += 'License: GNU General Public License (GPL) Vers.2<br/>';
 	                msg += 'Source: <a href="http://github.com/mborho/newsg">http://github.com/mborho/newsg</a>';
 	                msg += '<br/><div><b>Changelog:</b><br/>'
-                    msg += '<div>* 2.1.0 - support for pixi form factor - search order</div>';
+                    msg += '<div>* 2.1.2 - support for pixi form factor - search order</div>';
                     msg += '<div>* 1.9.1 - topics now configurable - editions added - bug fixes</div>';
                     msg += '<div>* 1.7.0 - search added - pull to reload gesture added - option for google mobilizer</div>';
 	                msg += '<div>* 1.4.2 - pull to refresh gesture added - more editions - this changelog</div>';
