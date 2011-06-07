@@ -116,21 +116,34 @@ SearchAssistant.prototype.onInputBlur= function(e) {
     return true;
 };
 
-SearchAssistant.prototype.handleSearchOrder = function(event) {
-    if(Settings.searchOrder == 'Rel') {
+SearchAssistant.prototype.hideSearchOrder = function(event) {
+    this.controller.get('searchOrderRel').style.display = 'none';
+    this.controller.get('searchOrderDate').style.display = 'none';    
+}
+
+SearchAssistant.prototype.showSearchOrder = function(event) {
+    if(Settings.searchOrder == 'Date') {
         this.controller.get('searchOrderRel').style.display = 'none';
         this.controller.get('searchOrderDate').style.display = 'block';
-        Settings.searchOrder = 'Date';
-    } else if(Settings.searchOrder == 'Date') {
+    } else if(Settings.searchOrder == 'Rel') {
         this.controller.get('searchOrderRel').style.display = 'block';
         this.controller.get('searchOrderDate').style.display = 'none';
+    }
+}
+
+SearchAssistant.prototype.handleSearchOrder = function(event) {
+    if(Settings.searchOrder == 'Rel') {
+        Settings.searchOrder = 'Date';
+    } else if(Settings.searchOrder == 'Date') {
         Settings.searchOrder = 'Rel';
     }
+    this.showSearchOrder();
     if(this.newsModel["items"].length > 0) ListHandler.reloadFirstPage(this);
 };
 
 SearchAssistant.prototype.handleSearchSubmit = function(event) {
 //     Mojo.Log.error('handling search submit: '+ event);
+    this.hideSearchOrder();
     this.apiResult.reset();
     $('searchStartIcon').hide();
     this.showNoResult('none');
@@ -268,6 +281,9 @@ SearchAssistant.prototype.renderSearch = function(data) {
        this.newsModel["items"] = newData;
        if(newData.length == 0) {
             this.showNoResult('block');
+            this.hideSearchOrder();
+       } else {
+            this.showSearchOrder();      
        }
     }
     this.controller.modelChanged(this.newsModel);

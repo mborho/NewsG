@@ -257,14 +257,14 @@ var ListHandler = function() {
             assistant.newsUrls = {};
             assistant.controller.modelChanged(assistant.newsModel);
             assistant.apiResult.reset();
-            Mojo.Log.error('reload search:' + assistant.apiResult.page);
+            //Mojo.Log.error('reload search:' + assistant.apiResult.page);
             assistant.spinnerAction('start');
             assistant.requestApi();
         },
         loadNextPage: function(assistant) { 
             try {$('load-more-icon').hide();} catch(e){};            
             assistant.apiResult.page = assistant.apiResult.page + 1;
-            Mojo.Log.error('load more:' + assistant.apiResult.page);
+            //Mojo.Log.error('load more:' + assistant.apiResult.page);
             assistant.spinnerAction('start');
             assistant.requestApi();
         },
@@ -303,7 +303,6 @@ Settings.loadFromDepot();
 var interValId = false
 function settingsChecker () {
   Mojo.Log.error('Waiting for settings: ' + intervalId); 
-  Mojo.Log.error();
   if(Settings.defaultNed != '' && Settings.defaultTopic != '' 
         && Settings.loadImages != ''  && Settings.dblClick != ''
             && Settings.mobilizer != '' && Settings.topicsOrder != false
@@ -339,7 +338,6 @@ StageAssistant.prototype.waitForSettings = function() {
 }
 
 StageAssistant.prototype.openSearchScene = function() {
-    Mojo.Log.error('Opening serch scene');
     Mojo.Controller.stageController.pushScene({name: "search", disableSceneScroller: true});
 }    
 
